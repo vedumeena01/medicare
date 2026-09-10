@@ -1,0 +1,13 @@
+{
+  "name": "get-shit-done",
+  "description": "GSD (Get Shit Done) 5-Phase Execution Protocol and Ralph Loop Autonomous Iteration plugin for Antigravity.",
+  "version": "1.0.0",
+  "author": "Antigravity Systems",
+  "skills": [
+    "get-shit-done",
+    "ralph-loop"
+  ],
+  "rules": [
+    "gsd-rules.md"
+  ]
+}

@@ -1,0 +1,46 @@
+# CodeRabbit Configuration File
+# https://docs.coderabbit.ai/getting-started/configure-coderabbit
+
+version: "2"
+language: "en-US"
+tone_instructions: "You are an expert senior healthcare software engineer and security auditor. Provide actionable, concise, and constructive code review feedback with a focus on type safety, medical safety rules, data privacy, and clean architecture."
+
+early_access: false
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: true
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "master"
+      - "develop"
+
+  path_filters:
+    - "!node_modules/**"
+    - "!.next/**"
+    - "!dist/**"
+    - "!build/**"
+    - "!package-lock.json"
+
+  path_instructions:
+    - path: "src/types/**"
+      instructions: "Ensure strict TypeScript typing without 'any'. Ensure all health data structures distinguish raw lab outputs from AI simplifications."
+    - path: "src/app/**"
+      instructions: "Ensure full accessibility, responsive mobile layouts, no unhandled async errors, and proper medical safety disclaimers."
+    - path: "src/components/**"
+      instructions: "Ensure reusable components have accessible contrast, clean props, and zero placeholder text."
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    enabled: true

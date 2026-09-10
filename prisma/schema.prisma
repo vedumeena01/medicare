@@ -1,0 +1,89 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  mobile       String
+  passwordHash String?
+  age          Int            @default(28)
+  gender       String         @default("Male")
+  language     String         @default("en")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  reports       Report[]
+  medicines     Medicine[]
+  familyMembers FamilyMember[]
+}
+
+model Report {
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyMemberId      String?
+  fileName            String
+  fileUrl             String?
+  reportType          String   @default("Blood Test")
+  uploadedAt          String
+  status              String   @default("Completed")
+  language            String   @default("en")
+  overallScore        Int      @default(85)
+  summary             String
+  summaryHi           String
+  findingsJson        String   // Serialized MedicalFinding[]
+  normalValuesJson    String   // Serialized NormalValueItem[]
+  medicalTermsJson    String   // Serialized MedicalTermExplanation[]
+  doctorQuestionsJson String   // Serialized DoctorQuestion[]
+  suggestionsJson     String   // Serialized SuggestionItem[]
+  riskAnalysisJson    String   // Serialized RiskAnalysisItem[]
+  comparisonJson      String?  // Serialized ReportComparison
+  createdAt           DateTime @default(now())
+}
+
+model Medicine {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  strength          String
+  form              String   @default("Tablet")
+  manufacturer      String?
+  dosageInstruction String
+  dosageInstructionHi String?
+  frequency         String   @default("Once daily")
+  timeSlot          String   @default("Morning")
+  scheduledTime     String   @default("08:00 AM")
+  startDate         String
+  endDate           String?
+  status            String   @default("Upcoming")
+  takenAt           String?
+  description       String
+  descriptionHi     String?
+  commonUsesJson    String   // Serialized string[]
+  precautionsJson   String   // Serialized string[]
+  sideEffectsJson   String   // Serialized string[]
+  whenToSeekHelp    String
+  whenToSeekHelpHi  String?
+  createdAt         DateTime @default(now())
+}
+
+model FamilyMember {
+  id                   String   @id @default(uuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                 String
+  relation             String
+  relationHi           String?
+  age                  Int
+  gender               String
+  healthConditionsJson String   @default("[]")
+  createdAt            DateTime @default(now())
+}
