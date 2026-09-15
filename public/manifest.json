@@ -1,0 +1,47 @@
+{
+  "name": "MediExplain AI — Multilingual Medical Report Simplifier",
+  "short_name": "MediExplain AI",
+  "description": "AI-powered medical report simplification and medicine organizer. Understand blood tests, prescriptions, and lab reports in simple English or Hindi.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/window.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Emergency Medical Card (ICE)",
+      "short_name": "ICE Card",
+      "description": "Instant paramedic emergency medical card with blood group & allergies",
+      "url": "/emergency",
+      "icons": [{ "src": "/globe.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Live AR Medicine Scanner",
+      "short_name": "Scanner",
+      "description": "Scan medicine strips and doctor prescriptions",
+      "url": "/medicines/scanner",
+      "icons": [{ "src": "/globe.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Upload & Analyze Report",
+      "short_name": "Analyze",
+      "description": "Upload CBC, Thyroid, or Lipid reports",
+      "url": "/analyze",
+      "icons": [{ "src": "/globe.svg", "sizes": "96x96" }]
+    }
+  ]
+}

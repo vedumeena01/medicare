@@ -65,6 +65,7 @@ async function runTestSuite() {
     'src/app/emergency/page.tsx',
     'scripts/verify.bat',
     'scripts/verify.sh',
+    'public/manifest.json',
   ];
 
   for (const file of requiredFiles) {
