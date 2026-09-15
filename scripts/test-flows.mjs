@@ -211,6 +211,10 @@ async function runTestSuite() {
     'navMedicines',
     'medicineSchedule',
     'disclaimerTitle',
+    'healthRiskAnalysis',
+    'healthRiskSubtitle',
+    'informationalOnly',
+    'riskCardDisclaimer',
   ];
 
   for (const key of criticalKeys) {

@@ -6,7 +6,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { Heart, Activity, ShieldAlert, CheckCircle } from 'lucide-react';
 
 export default function HealthRiskCard({ items }: { items: RiskAnalysisItem[] }) {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs space-y-4">
@@ -14,14 +14,14 @@ export default function HealthRiskCard({ items }: { items: RiskAnalysisItem[] })
         <div>
           <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Heart className="w-4 h-4 text-rose-500" />
-            <span>Health Risk Analysis</span>
+            <span>{t('healthRiskAnalysis')}</span>
           </h3>
           <p className="text-xs text-slate-500">
-            Calculated health risk indicators based on uploaded laboratory metrics
+            {t('healthRiskSubtitle')}
           </p>
         </div>
         <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">
-          Informational Only
+          {t('informationalOnly')}
         </span>
       </div>
 
@@ -93,7 +93,7 @@ export default function HealthRiskCard({ items }: { items: RiskAnalysisItem[] })
       <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[11px] text-slate-500 flex items-center gap-2">
         <Activity className="w-3.5 h-3.5 text-slate-400 shrink-0" />
         <span>
-          Please note: These are AI-assisted educational statistical predictions and not a medical diagnosis. Always confirm with your physician.
+          {t('riskCardDisclaimer')}
         </span>
       </div>
     </div>
