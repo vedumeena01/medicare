@@ -66,12 +66,24 @@ async function runTestSuite() {
     'scripts/verify.bat',
     'scripts/verify.sh',
     'public/manifest.json',
+    'public/sw.js',
+    'src/components/ServiceWorkerRegister.tsx',
   ];
 
   for (const file of requiredFiles) {
     const fullPath = path.join(rootDir, file);
     assert(fs.existsSync(fullPath), `Asset present: ${file}`);
   }
+
+  // Verify Service Worker Offline Cache Contracts
+  const swContent = fs.readFileSync(path.join(rootDir, 'public', 'sw.js'), 'utf-8');
+  assert(swContent.includes('mediexplain-offline'), 'ServiceWorker defines offline cache vault name');
+  assert(swContent.includes("'/emergency'"), 'ServiceWorker pre-caches Emergency ICE card route');
+
+  // Verify Emergency Card Lock-Screen Wallpaper Canvas Generator
+  const emergencyCardContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'EmergencyMedicalCard.tsx'), 'utf-8');
+  assert(emergencyCardContent.includes('handleDownloadLockscreenWallpaper'), 'Emergency card has lockscreen wallpaper generator');
+  assert(emergencyCardContent.includes('drawRoundRect'), 'Emergency card has cross-browser canvas rounded rect engine');
 
   // ---------------------------------------------------------
   // TEST SUITE 2: JSON Database Schema & Persistence

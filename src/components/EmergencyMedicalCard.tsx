@@ -15,13 +15,34 @@ import {
   CheckCircle2,
   MapPin,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Download,
+  Smartphone,
+  Zap,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 interface EmergencyMedicalCardProps {
   standalone?: boolean;
+}
+
+function drawRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  if (typeof ctx.roundRect === 'function') {
+    ctx.roundRect(x, y, w, h, r);
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
 }
 
 export default function EmergencyMedicalCard({ standalone = false }: EmergencyMedicalCardProps) {
@@ -40,34 +61,153 @@ export default function EmergencyMedicalCard({ standalone = false }: EmergencyMe
     window.print();
   };
 
+  const handleDownloadLockscreenWallpaper = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Background
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // Header Red Bar
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(0, 0, 1080, 270);
+
+    // ICE Tag
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 36px sans-serif';
+    ctx.fillText('IN CASE OF EMERGENCY (I.C.E.)', 60, 100);
+
+    ctx.font = 'bold 64px sans-serif';
+    ctx.fillText(user?.name?.toUpperCase() || 'VEDPRAKASH', 60, 195);
+
+    // Blood Group Section Box
+    ctx.fillStyle = '#1e293b';
+    drawRoundRect(ctx, 60, 320, 960, 260, 24);
+    ctx.fill();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.fillText('BLOOD GROUP / रक्त समूह', 100, 390);
+
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '900 130px sans-serif';
+    ctx.fillText(bloodGroup, 100, 525);
+
+    // Allergies Warning Box
+    ctx.fillStyle = '#450a0a';
+    drawRoundRect(ctx, 60, 620, 960, 240, 24);
+    ctx.fill();
+    ctx.strokeStyle = '#dc2626';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.fillStyle = '#f87171';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.fillText('⚠️ CRITICAL ALLERGIES / एलर्जी चेतावनी', 100, 690);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 46px sans-serif';
+    ctx.fillText(allergies.join(', ') || 'No Known Drug Allergies (NKDA)', 100, 780);
+
+    // Emergency Contact Box
+    ctx.fillStyle = '#1e293b';
+    drawRoundRect(ctx, 60, 900, 960, 280, 24);
+    ctx.fill();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.fillText('EMERGENCY NEXT-OF-KIN / आपातकालीन संपर्क', 100, 970);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 44px sans-serif';
+    ctx.fillText(`${emergencyContact.name} (${emergencyContact.relation})`, 100, 1040);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 54px sans-serif';
+    ctx.fillText(`📞 ${emergencyContact.phone}`, 100, 1120);
+
+    // Active Medications Box
+    ctx.fillStyle = '#1e293b';
+    drawRoundRect(ctx, 60, 1220, 960, 380, 24);
+    ctx.fill();
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.fillText('CURRENT PRESCRIBED MEDICATIONS / दवाएं', 100, 1290);
+
+    const activeMeds = medicines.slice(0, 3);
+    activeMeds.forEach((m, idx) => {
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 36px sans-serif';
+      ctx.fillText(`• ${m.name} (${m.strength || m.dosageInstruction || ''})`, 100, 1360 + idx * 70);
+    });
+
+    // Bottom Branding & Instructions
+    ctx.fillStyle = '#64748b';
+    ctx.font = 'bold 28px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Paramedic Triage Reference • Set as Phone Lock-Screen Wallpaper', 540, 1780);
+    ctx.fillStyle = '#3b82f6';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.fillText('MediExplain AI Healthcare Platform', 540, 1830);
+
+    // Trigger download
+    const link = document.createElement('a');
+    link.download = `ICE_Emergency_Lockscreen_${user?.name?.replace(/\s+/g, '_') || 'Patient'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
   return (
     <div className="space-y-6">
       {/* Action Bar (Hidden during Print) */}
-      <div className="flex items-center justify-between gap-3 print:hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <div>
-          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <span className="p-1.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200">
-              <ShieldAlert className="w-5 h-5" />
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <span className="p-1.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200">
+                <ShieldAlert className="w-5 h-5" />
+              </span>
+              <span>
+                {language === 'hi' ? 'आपातकालीन चिकित्सा पहचान पत्र (ICE)' : 'Emergency Medical Identity Card (ICE)'}
+              </span>
+            </h2>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{language === 'hi' ? 'ऑफलाइन कैश सुरक्षित' : 'Offline Cache Active'}</span>
             </span>
-            <span>
-              {language === 'hi' ? 'आपातकालीन चिकित्सा पहचान पत्र (ICE)' : 'Emergency Medical Identity Card (ICE)'}
-            </span>
-          </h2>
+          </div>
           <p className="text-xs text-slate-500">
             {language === 'hi'
-              ? 'आपातकालीन कर्मियों (EMT/डॉक्टर) के लिए तत्काल जीवन-रक्षक डेटा'
-              : 'Immediate life-saving clinical summary for paramedics, triage nurses, and emergency physicians'}
+              ? 'आपातकालीन कर्मियों (EMT/डॉक्टर) के लिए तत्काल जीवन-रक्षक डेटा — बिना नेटवर्क के भी उपलब्ध'
+              : 'Immediate life-saving clinical summary for paramedics, triage nurses, and emergency physicians — works offline'}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handlePrint}
-          className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
-        >
-          <Printer className="w-4 h-4" />
-          <span>{language === 'hi' ? 'प्रिंट / सेव कार्ड' : 'Print / Save Emergency Card'}</span>
-        </button>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            type="button"
+            onClick={handleDownloadLockscreenWallpaper}
+            className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+            title="Download high-resolution 1080x1920 phone lockscreen wallpaper"
+          >
+            <Smartphone className="w-4 h-4" />
+            <span>{language === 'hi' ? 'लॉक-स्क्रीन वॉलपेपर डाउनलोड' : 'Download Lockscreen ICE'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+          >
+            <Printer className="w-4 h-4" />
+            <span>{language === 'hi' ? 'प्रिंट / सेव कार्ड' : 'Print / Save Emergency Card'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Industrial Medical Emergency Card (ISO/EMT Clinical Standard) */}

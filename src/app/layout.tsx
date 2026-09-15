@@ -6,6 +6,7 @@ import { AppProvider } from "@/context/AppContext";
 import GlobalSearchModal from "@/components/GlobalSearchModal";
 import ReminderModal from "@/components/ReminderModal";
 import MobileNavigation from "@/components/MobileNavigation";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({
             <GlobalSearchModal />
             <ReminderModal />
             <MobileNavigation />
+            <ServiceWorkerRegister />
           </AppProvider>
         </LanguageProvider>
       </body>
