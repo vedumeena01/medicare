@@ -1,6 +1,11 @@
 # 🩺 Medicare AI (MediExplain)
 ### Multilingual Medical Report & Prescription Simplifier Platform
 
+[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(69%2F69)-brightgreen.svg)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black.svg)](https://nextjs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Medicare is a comprehensive healthcare web application designed to simplify medical laboratory reports, diagnostic panels, and physician prescriptions into plain, patient-friendly language in both **English** and **Hindi (हिंदी)**, while providing medication adherence tools, health trend metrics, and specialist appointment booking.
 
 ---

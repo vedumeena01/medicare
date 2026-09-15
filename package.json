@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node scripts/test-flows.mjs"
+    "test": "node scripts/test-flows.mjs",
+    "ci": "tsc --noEmit && node scripts/test-flows.mjs && next build"
   },
   "dependencies": {
     "@google/genai": "^2.21.0",
