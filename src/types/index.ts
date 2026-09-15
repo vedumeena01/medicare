@@ -347,3 +347,29 @@ export interface DrugInteractionAnalysisResult {
   message?: string;
 }
 
+export type FeedbackCategory = 'bug' | 'feature' | 'translation' | 'accuracy' | 'general';
+
+export interface FeedbackItem {
+  id: string;
+  userId: string;
+  userName?: string;
+  rating: number; // 1-5
+  category: FeedbackCategory;
+  description: string;
+  timestamp: string;
+  status: 'new' | 'in-review' | 'resolved';
+  deviceDetails?: {
+    browser?: string;
+    os?: string;
+    screenResolution?: string;
+    language?: string;
+  };
+}
+
+export interface AnalyticsEvent {
+  eventName: string;
+  properties?: Record<string, string | number | boolean>;
+  timestamp: string;
+  path?: string;
+}
+

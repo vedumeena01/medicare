@@ -9,6 +9,7 @@ import {
   Appointment,
   Consultation,
   NotificationItem,
+  FeedbackItem,
 } from '@/types';
 import {
   sampleUser,
@@ -30,6 +31,7 @@ interface DatabaseSchema {
   appointments: Appointment[];
   consultations: Consultation[];
   notifications: NotificationItem[];
+  feedback?: FeedbackItem[];
   lastUpdated: string;
 }
 
@@ -346,6 +348,27 @@ export const db = {
     data.notifications.unshift(item);
     writeDatabase(data);
     return item;
+  },
+
+  // Feedback Operations
+  getFeedback(): FeedbackItem[] {
+    const data = ensureDatabaseInitialized();
+    return data.feedback || [];
+  },
+  saveFeedback(
+    feedback: Omit<FeedbackItem, 'id' | 'timestamp' | 'status'> & { id?: string; timestamp?: string; status?: FeedbackItem['status'] }
+  ): FeedbackItem {
+    const data = ensureDatabaseInitialized();
+    if (!data.feedback) data.feedback = [];
+    const newFeedback: FeedbackItem = {
+      ...feedback,
+      id: feedback.id || 'fb-' + Date.now(),
+      timestamp: feedback.timestamp || new Date().toISOString(),
+      status: feedback.status || 'new',
+    };
+    data.feedback.unshift(newFeedback);
+    writeDatabase(data);
+    return newFeedback;
   },
 
   resetDatabase(): DatabaseSchema {

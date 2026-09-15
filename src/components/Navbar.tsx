@@ -15,18 +15,21 @@ import {
   FileText,
   Pill,
   Calendar,
-  ShieldAlert
+  ShieldAlert,
+  MessageSquare
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useApp } from '@/context/AppContext';
 import LanguageSelector from './LanguageSelector';
 import CaregiverProfileSwitcher from './CaregiverProfileSwitcher';
+import FeedbackModal from './FeedbackModal';
 
 export default function Navbar() {
   const pathname = usePathname();
   const { t } = useLanguage();
   const { user, isAuthenticated, setIsSearchOpen, unreadNotificationsCount } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const isDashboardView =
     pathname.startsWith('/dashboard') ||
@@ -135,6 +138,17 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+
+          {/* In-App Feedback Trigger Button */}
+          <button
+            type="button"
+            onClick={() => setIsFeedbackOpen(true)}
+            title="Share Feedback or Report Bug"
+            className="p-2 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            aria-label="Share Feedback"
+          >
+            <MessageSquare className="w-5 h-5" />
+          </button>
 
 
           {!isDashboardView ? (
@@ -313,6 +327,9 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Global In-App Feedback & Bug Reporting Modal */}
+      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
     </header>
   );
 }

@@ -72,6 +72,11 @@ async function runTestSuite() {
     'src/lib/fhirExport.ts',
     'src/lib/reminderNotification.ts',
     'RELEASE_NOTES_v1.0.md',
+    'src/app/error.tsx',
+    'src/app/global-error.tsx',
+    'src/app/loading.tsx',
+    'src/components/FeedbackModal.tsx',
+    'src/lib/analytics.ts',
   ];
 
   for (const file of requiredFiles) {
@@ -295,6 +300,30 @@ async function runTestSuite() {
   const notificationsContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'notifications', 'page.tsx'), 'utf-8');
   assert(notificationsContent.includes('activeChannelFilter'), 'Notifications page supports channel-level filtering');
   assert(notificationsContent.includes('Multi-Channel Reminder Test Dispatcher'), 'Notifications page includes multi-channel reminder simulator');
+
+  // ---------------------------------------------------------
+  // TEST SUITE 9: Production Resilience & Feedback Telemetry
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 9: Production Resilience & Feedback Telemetry');
+
+  const errorContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'error.tsx'), 'utf-8');
+  assert(errorContent.includes('reset: () => void'), 'error.tsx implements route recovery mechanism');
+
+  const globalErrorContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'global-error.tsx'), 'utf-8');
+  assert(globalErrorContent.includes('<html') && globalErrorContent.includes('<body'), 'global-error.tsx maintains root HTML document structure');
+
+  const analyticsContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'analytics.ts'), 'utf-8');
+  assert(analyticsContent.includes('trackEvent'), 'analytics.ts exports trackEvent');
+  assert(analyticsContent.includes('sanitizeProperties'), 'analytics.ts enforces PHI privacy sanitization');
+
+  const feedbackApiContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'api', 'feedback', 'route.ts'), 'utf-8');
+  assert(feedbackApiContent.includes('db.saveFeedback'), 'Feedback API saves submissions into db');
+
+  const dbContentFile = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'db.ts'), 'utf-8');
+  assert(dbContentFile.includes('getFeedback()') && dbContentFile.includes('saveFeedback('), 'db.ts implements feedback operations');
+
+  const updatedNavbar = fs.readFileSync(path.join(rootDir, 'src', 'components', 'Navbar.tsx'), 'utf-8');
+  assert(updatedNavbar.includes('FeedbackModal'), 'Navbar mounts FeedbackModal');
 
   // ---------------------------------------------------------
   // Summary & Final Exit

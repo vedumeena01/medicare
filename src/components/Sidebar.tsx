@@ -21,14 +21,17 @@ import {
   Sparkles,
   Bell,
   Stethoscope,
+  MessageSquare,
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useApp } from '@/context/AppContext';
+import FeedbackModal from './FeedbackModal';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { t } = useLanguage();
   const { logout, user, unreadNotificationsCount } = useApp();
+  const [isFeedbackOpen, setIsFeedbackOpen] = React.useState(false);
 
   const mainNavItems = [
     {
@@ -196,6 +199,14 @@ export default function Sidebar() {
             <span>Help</span>
           </Link>
           <button
+            type="button"
+            onClick={() => setIsFeedbackOpen(true)}
+            className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 transition-colors p-1 font-medium"
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Feedback</span>
+          </button>
+          <button
             onClick={logout}
             className="flex items-center gap-1.5 text-rose-600 hover:text-rose-700 transition-colors p-1 font-medium"
           >
@@ -204,6 +215,8 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
+
+      <FeedbackModal isOpen={isFeedbackOpen} onClose={() => setIsFeedbackOpen(false)} />
     </aside>
   );
 }
