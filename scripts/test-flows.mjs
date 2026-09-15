@@ -61,6 +61,8 @@ async function runTestSuite() {
     'public/samples/Sample_HbA1c_Diabetes_Report.pdf',
     'public/samples/Sample_Thyroid_Profile_Report.pdf',
     'public/samples/Sample_Doctor_Prescription.pdf',
+    'scripts/verify.bat',
+    'scripts/verify.sh',
   ];
 
   for (const file of requiredFiles) {

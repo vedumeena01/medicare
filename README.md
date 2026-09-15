@@ -1,7 +1,7 @@
 # 🩺 Medicare AI (MediExplain)
 ### Multilingual Medical Report & Prescription Simplifier Platform
 
-[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(69%2F69)-brightgreen.svg)](#)
+[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(71%2F71)-brightgreen.svg)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black.svg)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -39,10 +39,16 @@ cd medicare
 npm install
 ```
 
-### 3. Automated Health Verification Suite
+### 3. Automated Health Verification & Multi-Tier CI
 ```bash
-# Run the 69-point automated smoke test & health check
+# Run the 71-point automated health suite:
 npm test
+
+# Or run the complete multi-tier CI pipeline (Typecheck + 71 Tests + Production Build):
+npm run ci
+
+# On Windows (1-Click double-clickable script):
+scripts\verify.bat
 ```
 
 ### 4. Run Development Server
