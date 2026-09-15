@@ -20,7 +20,11 @@ import {
   Zap,
   Info,
   ExternalLink,
-  Volume2
+  Volume2,
+  Share2,
+  Users,
+  Download,
+  AlertTriangle
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -30,7 +34,7 @@ export default function ClientDemoTour() {
   const { language } = useLanguage();
 
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedPersona, setSelectedPersona] = useState<'diabetic' | 'surgical' | 'wellness'>('diabetic');
+  const [selectedPersona, setSelectedPersona] = useState<'diabetic' | 'caregiver' | 'surgical' | 'wellness'>('diabetic');
   const [actionStatus, setActionStatus] = useState<string | null>(null);
 
   const handleReloadDemo = async () => {
@@ -61,30 +65,39 @@ export default function ClientDemoTour() {
 
   const personas = {
     diabetic: {
-      title: language === 'hi' ? 'केस 1: मधुमेह व हृदय स्वास्थ्य' : 'Case 1: Chronic Diabetic & Lipid Care',
-      subtitle: language === 'hi' ? 'उच्च शुगर (140 mg/dL) और कोलेस्ट्रॉल रिपोर्ट' : 'Elevated Glucose (140 mg/dL) & High Cholesterol',
+      title: language === 'hi' ? 'केस 1: डायबिटीज़ व FHIR वॉल्ट' : 'Case 1: Diabetes & FHIR Vault',
+      subtitle: language === 'hi' ? 'उच्च शुगर (140 mg/dL) व HL7 R4 वॉल्ट निर्यात' : 'Glucose (140 mg/dL) & HL7 FHIR R4 Export',
       patient: language === 'hi' ? 'वेदप्रकाश (उम्र 58, टाइप-2 डायबिटीज़)' : 'Vedprakash (Age 58, Type-2 Diabetes)',
       recommendedPath: [
         { name: language === 'hi' ? 'सीबीसी व शुगर रिपोर्ट विश्लेषण' : 'CBC & Sugar Lab Breakdown', href: '/reports/rep-cbc-june-2026', icon: FileText, tag: 'Lab OCR' },
-        { name: language === 'hi' ? 'कार्डियोलॉजिस्ट से अपॉइंटमेंट बुक करें' : 'Book Cardiologist Consult', href: '/appointments', icon: Calendar, tag: 'Telehealth' },
+        { name: language === 'hi' ? 'HL7 FHIR R4 व CSV वॉल्ट डाउनलोड' : 'Export HL7 FHIR R4 Vault', href: '/settings', icon: Download, tag: 'Interoperability' },
+      ],
+    },
+    caregiver: {
+      title: language === 'hi' ? 'केस 2: केयरगिवर व डिपेंडेंट स्विच' : 'Case 2: Caregiver & Dependent Context',
+      subtitle: language === 'hi' ? 'बुजुर्ग माता-पिता (सल्फा/एस्पिरिन एलर्जी) प्रबंधन' : 'Elderly Dependent Switching & ICE Sync',
+      patient: language === 'hi' ? 'रमेश (पिता, उम्र 64, सल्फा एलर्जी)' : 'Ramesh (Father, Age 64, Sulfa Allergy)',
+      recommendedPath: [
+        { name: language === 'hi' ? 'डिपेंडेंट प्रोफाइल व फैमिली सेंटर' : 'Dependent Family Command Center', href: '/family', icon: Users, tag: 'Caregiver Hub' },
+        { name: language === 'hi' ? 'ऑफ़लाइन इमरजेंसी कार्ड व वॉलपेपर' : 'Offline ICE Card & Wallpaper', href: '/emergency', icon: AlertTriangle, tag: 'Paramedic ICE' },
       ],
     },
     surgical: {
-      title: language === 'hi' ? 'केस 2: सर्जरी के बाद एंटीबायोटिक चक्र' : 'Case 2: Post-Op Antibiotic & Pain Care',
-      subtitle: language === 'hi' ? 'Augmentin + Dolo 650 + पैंटोप्रैजोल अनुपालन' : 'Augmentin + Dolo 650 + Pantoprazole Adherence',
+      title: language === 'hi' ? 'केस 3: दवा अनुपालन व व्हाट्सएप' : 'Case 3: Rx Adherence & WhatsApp',
+      subtitle: language === 'hi' ? 'Augmentin + Dolo 650 व व्हाट्सएप रिमाइंडर' : 'Antibiotic Schedule & WhatsApp Alerts',
       patient: language === 'hi' ? 'प्रिया शर्मा (उम्र 34, ऑर्थोपेडिक रिकवरी)' : 'Priya Sharma (Age 34, Post-Op Recovery)',
       recommendedPath: [
-        { name: language === 'hi' ? 'लाइव एआर दवा कैमरा स्कैनर' : 'Live AR Camera Drug Scanner', href: '/medicines/scanner', icon: Camera, tag: 'Live AR' },
-        { name: language === 'hi' ? 'दवा टकराव व एलर्जी जांच' : 'Drug-Drug Conflict & Allergy Check', href: '/medicines/interactions', icon: ShieldAlert, tag: 'Safety' },
+        { name: language === 'hi' ? 'व्हाट्सएप व एसएमएस दवा रिमाइंडर' : 'WhatsApp & SMS Dose Reminders', href: '/schedules', icon: Share2, tag: 'Multi-Channel' },
+        { name: language === 'hi' ? 'मल्टी-चैनल अलर्ट लॉग व सिम्युलेटर' : 'Multi-Channel Alert History', href: '/notifications', icon: Clock, tag: 'Audit Trail' },
       ],
     },
     wellness: {
-      title: language === 'hi' ? 'केस 3: थायरॉयड व सामान्य स्वास्थ्य' : 'Case 3: Thyroid & General Wellness',
-      subtitle: language === 'hi' ? 'संतुलित TSH (2.8 uIU/mL) और दैनिक पोषण' : 'Regulated TSH (2.8 uIU/mL) & Lifestyle Guidance',
+      title: language === 'hi' ? 'केस 4: एआर स्कैनर व एलर्जी जांच' : 'Case 4: Live AR Scanner & Safety',
+      subtitle: language === 'hi' ? 'कैमरा स्कैनर व दवा टकराव सुरक्षा' : 'Live Camera OCR & Drug Clash Screening',
       patient: language === 'hi' ? 'सुनीता मेहता (उम्र 46, वार्षिक स्वास्थ्य जांच)' : 'Sunita Mehta (Age 46, Annual Wellness)',
       recommendedPath: [
-        { name: language === 'hi' ? 'थायरॉयड प्रोफाइल रिपोर्ट' : 'Thyroid Profile Review', href: '/reports/rep-thyroid-may-2026', icon: FileText, tag: 'Normal Lab' },
-        { name: language === 'hi' ? 'एआई स्वास्थ्य सहायक से प्रश्न पूछें' : 'Consult AI Clinical Assistant', href: '/assistant', icon: Bot, tag: 'Gemini AI' },
+        { name: language === 'hi' ? 'लाइव एआर दवा कैमरा स्कैनर' : 'Live AR Camera Drug Scanner', href: '/medicines/scanner', icon: Camera, tag: 'Live AR' },
+        { name: language === 'hi' ? 'दवा टकराव व एलर्जी जांच' : 'Drug-Drug Conflict & Allergy Check', href: '/medicines/interactions', icon: ShieldAlert, tag: 'Clinical Safety' },
       ],
     },
   };
@@ -185,7 +198,7 @@ export default function ClientDemoTour() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
                 {(Object.keys(personas) as Array<keyof typeof personas>).map((key) => {
                   const p = personas[key];
                   const isSelected = selectedPersona === key;

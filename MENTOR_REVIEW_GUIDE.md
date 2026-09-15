@@ -31,7 +31,7 @@ Diagnostic lab reports and physician prescriptions contain vital health informat
 | **5. Drug-Drug Interactions** | Screen active prescriptions & allergies | `http://localhost:3000/medicines/interactions` | Automatic allergy cross-checking (e.g. Penicillin conflict) and food timing rules. |
 | **6. AI Report Extraction** | Test OCR & analysis pipeline | `http://localhost:3000/analyze` | 4 sample report cards (CBC, HbA1c, Thyroid, Rx). Click **"Analyze"** to observe 5-step animated scanning engine. |
 | **7. Bilingual Summary** | View report breakdown in EN / HI | `http://localhost:3000/reports/rep-cbc-june-2026` | Low Hb (10.8) and High Sugar (140) flagged in red; toggle English &lt;&gt; Hindi navbar icon to view full translation. |
-| **8. Automated Quality Suite** | Run single-command health check | Terminal: `npm test` or double-click `scripts/verify.bat` | **110/110 automated assertions passing 100%** across schema, clinical math, and localization. |
+| **8. Automated Quality Suite** | Run single-command health check | Terminal: `npm test` or double-click `scripts/verify.bat` | **111/111 automated assertions passing 100%** across schema, clinical math, and localization. |
 
 ---
 

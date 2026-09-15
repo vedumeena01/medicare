@@ -71,6 +71,7 @@ async function runTestSuite() {
     'src/components/CaregiverProfileSwitcher.tsx',
     'src/lib/fhirExport.ts',
     'src/lib/reminderNotification.ts',
+    'RELEASE_NOTES_v1.0.md',
   ];
 
   for (const file of requiredFiles) {
