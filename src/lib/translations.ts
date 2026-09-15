@@ -141,6 +141,17 @@ export const translations = {
     lowConfidenceNotice: "Some information could not be confidently extracted. Please verify against the original report.",
     unclearImageError: "The uploaded image is difficult to read. Please upload a clearer image.",
     unsupportedFile: "This document type is currently not supported. Please upload JPG, PNG, or PDF.",
+    
+    // Multi-Channel Reminders
+    sendReminder: "Send Dose Reminder",
+    whatsappReminder: "Send via WhatsApp",
+    smsReminder: "Send via SMS",
+    instantPushAlert: "Dispatch In-App Push",
+    channelWhatsApp: "WhatsApp",
+    channelSms: "SMS",
+    channelPush: "In-App Push",
+    channelFilterAll: "All Channels",
+    reminderSentSuccess: "Reminder dispatched successfully!",
   },
   hi: {
     brandName: "MediExplain AI",
@@ -284,5 +295,16 @@ export const translations = {
     lowConfidenceNotice: "कुछ जानकारी पूरी सटीकता से नहीं पढ़ी जा सकी। कृपया मूल रिपोर्ट से मिलान करें।",
     unclearImageError: "अपलोड की गई छवि स्पष्ट नहीं है। कृपया अधिक स्पष्ट फोटो अपलोड करें।",
     unsupportedFile: "यह फ़ाइल प्रकार समर्थित नहीं है। कृपया JPG, PNG, या PDF अपलोड करें।",
+    
+    // Multi-Channel Reminders
+    sendReminder: "दवा रिमाइंडर भेजें",
+    whatsappReminder: "व्हाट्सएप द्वारा भेजें",
+    smsReminder: "एसएमएस (SMS) द्वारा भेजें",
+    instantPushAlert: "इन-ऐप पुश अलर्ट भेजें",
+    channelWhatsApp: "व्हाट्सएप",
+    channelSms: "एसएमएस",
+    channelPush: "पुश नोटिफिकेशन",
+    channelFilterAll: "सभी चैनल्स",
+    reminderSentSuccess: "रिमाइंडर सफलतापूर्वक भेजा गया!",
   }
 };

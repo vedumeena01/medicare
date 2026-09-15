@@ -19,7 +19,12 @@ import {
   TrendingUp,
   ShieldCheck,
   Filter,
-  FileText
+  FileText,
+  Send,
+  MessageSquare,
+  Share2,
+  Check,
+  ExternalLink
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
@@ -27,6 +32,12 @@ import DisclaimerBanner from '@/components/DisclaimerBanner';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { Medicine, MedicineFrequency, TimeSlot } from '@/types';
+import {
+  formatDoseReminderMessage,
+  generateWhatsAppReminderUrl,
+  generateSmsReminderUrl,
+  simulateChannelDispatch
+} from '@/lib/reminderNotification';
 
 export default function MedicineSchedulePage() {
   const {
@@ -34,9 +45,18 @@ export default function MedicineSchedulePage() {
     addMedicine,
     updateMedicineStatus,
     deleteMedicine,
-    triggerDemoReminder
+    triggerDemoReminder,
+    activeProfile,
+    familyMembers,
+    addNotification,
+    user
   } = useApp();
   const { t, language } = useLanguage();
+
+  const [reminderModalMed, setReminderModalMed] = useState<Medicine | null>(null);
+  const [selectedRecipientType, setSelectedRecipientType] = useState<string>('active');
+  const [recipientPhoneInput, setRecipientPhoneInput] = useState<string>('');
+  const [dispatchFeedback, setDispatchFeedback] = useState<string | null>(null);
 
   const [viewMode, setViewMode] = useState<'today' | 'calendar' | 'all' | 'audit'>('today');
   const [statusFilter, setStatusFilter] = useState<'all' | 'Upcoming' | 'Taken' | 'Skipped'>('all');
@@ -391,6 +411,22 @@ export default function MedicineSchedulePage() {
 
                       {/* Status Badges & Controls (Section 30) */}
                       <div className="flex items-center gap-2 self-end sm:self-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReminderModalMed(med);
+                            setSelectedRecipientType('active');
+                            const initialPhone = activeProfile.emergencyContact?.phone || user?.mobile || '+91 98765 11111';
+                            setRecipientPhoneInput(initialPhone);
+                            setDispatchFeedback(null);
+                          }}
+                          className="px-2.5 py-1.5 rounded-xl border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 text-xs font-semibold flex items-center gap-1 transition-all"
+                          title="Send WhatsApp or SMS reminder"
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">{t('sendReminder')}</span>
+                        </button>
+
                         {isTaken ? (
                           <div className="flex items-center gap-1.5">
                             <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-xl border border-emerald-200 flex items-center gap-1">
@@ -833,6 +869,215 @@ export default function MedicineSchedulePage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Multi-Channel WhatsApp & SMS Reminder Dispatch Modal */}
+      {reminderModalMed && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+                  <Share2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                    <span>{t('sendReminder')}</span>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                      {reminderModalMed.name}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Dispatch dose alerts via WhatsApp, SMS, or instant in-app notification
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setReminderModalMed(null)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Recipient Selection */}
+            <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Recipient Contact
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRecipientType('active');
+                    setRecipientPhoneInput(activeProfile.emergencyContact?.phone || '+91 98765 11111');
+                  }}
+                  className={`p-2.5 rounded-xl border text-left transition ${
+                    selectedRecipientType === 'active'
+                      ? 'border-emerald-500 bg-white shadow-xs ring-1 ring-emerald-400'
+                      : 'border-slate-200 bg-white/60 hover:bg-white text-slate-600'
+                  }`}
+                >
+                  <span className="block text-xs font-bold text-slate-900 truncate">
+                    {activeProfile.name}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block truncate">
+                    {activeProfile.relationship} &bull; {activeProfile.emergencyContact?.phone || '+91 98765 11111'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRecipientType('self');
+                    setRecipientPhoneInput(user?.mobile || '+91 98765 43210');
+                  }}
+                  className={`p-2.5 rounded-xl border text-left transition ${
+                    selectedRecipientType === 'self'
+                      ? 'border-emerald-500 bg-white shadow-xs ring-1 ring-emerald-400'
+                      : 'border-slate-200 bg-white/60 hover:bg-white text-slate-600'
+                  }`}
+                >
+                  <span className="block text-xs font-bold text-slate-900 truncate">
+                    {user?.name || 'Primary User'}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block truncate">
+                    Self &bull; {user?.mobile || '+91 98765 43210'}
+                  </span>
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  Mobile Number (with Country Code)
+                </label>
+                <input
+                  type="tel"
+                  value={recipientPhoneInput}
+                  onChange={(e) => setRecipientPhoneInput(e.target.value)}
+                  placeholder="+91 98765 11111"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Formatted Message Preview */}
+            <div className="space-y-1.5">
+              <span className="text-xs font-bold text-slate-600 flex items-center justify-between">
+                <span>Message Preview</span>
+                <span className="text-[11px] text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-md">
+                  {language === 'hi' ? 'हिंदी प्रारूप' : 'English Template'}
+                </span>
+              </span>
+              <div className="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-3.5 text-xs text-slate-700 whitespace-pre-wrap font-mono leading-relaxed max-h-36 overflow-y-auto">
+                {formatDoseReminderMessage(
+                  reminderModalMed,
+                  selectedRecipientType === 'active' ? activeProfile.name : (user?.name || 'Patient'),
+                  language === 'hi' ? 'hi' : 'en'
+                )}
+              </div>
+            </div>
+
+            {/* Feedback Alert */}
+            {dispatchFeedback && (
+              <div className="p-3 bg-emerald-100/80 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-semibold flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>{dispatchFeedback}</span>
+              </div>
+            )}
+
+            {/* Multi-Channel Action Buttons */}
+            <div className="space-y-2 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* WhatsApp Dispatch Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const recipientName = selectedRecipientType === 'active' ? activeProfile.name : (user?.name || 'Patient');
+                    const targetLang = language === 'hi' ? 'hi' : 'en';
+                    const waUrl = generateWhatsAppReminderUrl(reminderModalMed, recipientName, recipientPhoneInput, targetLang);
+                    
+                    const dispatch = simulateChannelDispatch({
+                      medicine: reminderModalMed,
+                      patientName: recipientName,
+                      channel: 'whatsapp',
+                      recipientPhone: recipientPhoneInput,
+                      lang: targetLang
+                    });
+                    addNotification(dispatch.notification);
+                    setDispatchFeedback(
+                      language === 'hi'
+                        ? 'व्हाट्सएप चैट विंडो खोली गई और सूचना दर्ज कर ली गई।'
+                        : 'WhatsApp window opened and reminder logged to notification history!'
+                    );
+                    window.open(waUrl, '_blank');
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>{t('whatsappReminder')}</span>
+                </button>
+
+                {/* SMS Dispatch Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const recipientName = selectedRecipientType === 'active' ? activeProfile.name : (user?.name || 'Patient');
+                    const targetLang = language === 'hi' ? 'hi' : 'en';
+                    const smsUrl = generateSmsReminderUrl(reminderModalMed, recipientName, recipientPhoneInput, targetLang);
+
+                    const dispatch = simulateChannelDispatch({
+                      medicine: reminderModalMed,
+                      patientName: recipientName,
+                      channel: 'sms',
+                      recipientPhone: recipientPhoneInput,
+                      lang: targetLang
+                    });
+                    addNotification(dispatch.notification);
+                    setDispatchFeedback(
+                      language === 'hi'
+                        ? 'एसएमएस क्लाइंट ट्रिगर किया गया और इतिहास में दर्ज हुआ।'
+                        : 'SMS client initiated and logged to notification history!'
+                    );
+                    window.location.href = smsUrl;
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>{t('smsReminder')}</span>
+                </button>
+              </div>
+
+              {/* In-App Push Alert */}
+              <button
+                type="button"
+                onClick={() => {
+                  const recipientName = selectedRecipientType === 'active' ? activeProfile.name : (user?.name || 'Patient');
+                  const targetLang = language === 'hi' ? 'hi' : 'en';
+                  triggerDemoReminder(reminderModalMed);
+
+                  const dispatch = simulateChannelDispatch({
+                    medicine: reminderModalMed,
+                    patientName: recipientName,
+                    channel: 'push',
+                    recipientPhone: recipientPhoneInput,
+                    lang: targetLang
+                  });
+                  addNotification(dispatch.notification);
+                  setDispatchFeedback(
+                    language === 'hi'
+                      ? 'अलार्म और इन-ऐप पुश अलर्ट सफलतापूर्वक सक्रिय किया गया!'
+                      : 'Audio alarm and In-App Push alert dispatched successfully!'
+                  );
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold flex items-center justify-center gap-2 transition-all"
+              >
+                <Bell className="w-4 h-4 text-blue-600" />
+                <span>{t('instantPushAlert')}</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -12,24 +12,65 @@ import {
   ChevronRight,
   Clock,
   Filter,
+  MessageSquare,
+  Share2,
+  Send,
+  Smartphone
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { NotificationItem } from '@/types';
+import { NotificationItem, NotificationChannel } from '@/types';
+import { simulateChannelDispatch } from '@/lib/reminderNotification';
 
 export default function NotificationsPage() {
-  const { notifications, markNotificationAsRead, markAllNotificationsAsRead } = useApp();
+  const {
+    notifications,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
+    medicines,
+    activeProfile,
+    addNotification
+  } = useApp();
   const { t, language } = useLanguage();
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'medicine' | 'appointment' | 'report' | 'system'>('all');
+  const [activeChannelFilter, setActiveChannelFilter] = useState<'all' | 'push' | 'whatsapp' | 'sms'>('all');
+  const [simulatorMedId, setSimulatorMedId] = useState<string>(medicines[0]?.id || '');
+  const [simulatorChannel, setSimulatorChannel] = useState<NotificationChannel>('whatsapp');
+  const [testSentFeedback, setTestSentFeedback] = useState<string | null>(null);
 
   const filteredNotifications = notifications.filter((item) => {
-    if (activeFilter === 'all') return true;
-    return item.type === activeFilter;
+    if (activeFilter !== 'all' && item.type !== activeFilter) return false;
+    if (activeChannelFilter !== 'all') {
+      const itemChannel = item.channel || 'push';
+      if (itemChannel !== activeChannelFilter) return false;
+    }
+    return true;
   });
+
+  const handleSimulateTestDispatch = () => {
+    const targetMed = medicines.find((m) => m.id === simulatorMedId) || medicines[0];
+    if (!targetMed) return;
+
+    const dispatch = simulateChannelDispatch({
+      medicine: targetMed,
+      patientName: activeProfile.name,
+      channel: simulatorChannel,
+      recipientPhone: activeProfile.emergencyContact?.phone || '+91 98765 11111',
+      lang: language === 'hi' ? 'hi' : 'en'
+    });
+
+    addNotification(dispatch.notification);
+    setTestSentFeedback(
+      language === 'hi'
+        ? `${simulatorChannel.toUpperCase()} सिमुलेशन अलर्ट सफलतापूर्वक भेजा गया!`
+        : `${simulatorChannel.toUpperCase()} reminder simulated and added to feed!`
+    );
+    setTimeout(() => setTestSentFeedback(null), 4000);
+  };
 
   const getIcon = (type: NotificationItem['type']) => {
     switch (type) {
@@ -75,12 +116,12 @@ export default function NotificationsPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900">
-                  {language === 'hi' ? 'सूचनाएं व अलर्ट' : 'Notifications & Health Alerts'}
+                  {language === 'hi' ? 'सूचनाएं व मल्टी-चैनल अलर्ट' : 'Notifications & Multi-Channel Alerts'}
                 </h1>
                 <p className="text-xs text-slate-500">
                   {language === 'hi'
-                    ? 'दवा समय, आगामी डॉक्टर अपॉइंटमेंट्स और रिपोर्ट अपडेट्स'
-                    : 'Real-time dosage reminders, appointment confirmations, and AI report updates'}
+                    ? 'दवा समय, व्हाट्सएप/एसएमएस प्रेषण इतिहास, और डॉक्टर अपॉइंटमेंट्स'
+                    : 'Real-time dosage reminders, WhatsApp/SMS dispatch audit logs, and AI report updates'}
                 </p>
               </div>
             </div>
@@ -94,29 +135,119 @@ export default function NotificationsPage() {
             </button>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-2 border-b border-slate-200 mb-6 overflow-x-auto pb-2">
-            {(
-              [
-                { id: 'all', label: language === 'hi' ? 'सभी' : 'All Alerts' },
-                { id: 'medicine', label: language === 'hi' ? 'दवा रिमाइंडर' : 'Medicine Reminders' },
-                { id: 'appointment', label: language === 'hi' ? 'अपॉइंटमेंट्स' : 'Appointments' },
-                { id: 'report', label: language === 'hi' ? 'रिपोर्ट्स' : 'Report Updates' },
-                { id: 'system', label: language === 'hi' ? 'सुरक्षा व सिस्टम' : 'System' },
-              ] as const
-            ).map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveFilter(tab.id)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
-                  activeFilter === tab.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          {/* Quick Interactive Multi-Channel Dispatch Simulator Bar */}
+          <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-4 sm:p-5 mb-6 shadow-md">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                    Simulator
+                  </span>
+                  <h3 className="text-sm font-bold">Multi-Channel Reminder Test Dispatcher</h3>
+                </div>
+                <p className="text-xs text-slate-300">
+                  Test instant alerts for active dependent ({activeProfile.name}) across WhatsApp, SMS, or Push channels.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {medicines.length > 0 && (
+                  <select
+                    value={simulatorMedId || medicines[0]?.id}
+                    onChange={(e) => setSimulatorMedId(e.target.value)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-100 text-xs border border-slate-700 focus:outline-none"
+                  >
+                    {medicines.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name} ({m.scheduledTime})
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                <select
+                  value={simulatorChannel}
+                  onChange={(e) => setSimulatorChannel(e.target.value as NotificationChannel)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-100 text-xs border border-slate-700 focus:outline-none"
+                >
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="sms">SMS Gateway</option>
+                  <option value="push">In-App Push</option>
+                </select>
+
+                <button
+                  type="button"
+                  onClick={handleSimulateTestDispatch}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold transition flex items-center gap-1.5"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Send Test Alert</span>
+                </button>
+              </div>
+            </div>
+
+            {testSentFeedback && (
+              <div className="mt-3 p-2 bg-emerald-500/20 border border-emerald-400/40 rounded-xl text-xs text-emerald-200 font-semibold animate-in fade-in">
+                ✓ {testSentFeedback}
+              </div>
+            )}
+          </div>
+
+          {/* Filter Tabs (Category & Delivery Channel) */}
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-2">
+              <span className="text-xs font-bold text-slate-400 mr-1 shrink-0">Category:</span>
+              {(
+                [
+                  { id: 'all', label: language === 'hi' ? 'सभी' : 'All Alerts' },
+                  { id: 'medicine', label: language === 'hi' ? 'दवा रिमाइंडर' : 'Medicine Reminders' },
+                  { id: 'appointment', label: language === 'hi' ? 'अपॉइंटमेंट्स' : 'Appointments' },
+                  { id: 'report', label: language === 'hi' ? 'रिपोर्ट्स' : 'Report Updates' },
+                  { id: 'system', label: language === 'hi' ? 'सुरक्षा व सिस्टम' : 'System' },
+                ] as const
+              ).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFilter(tab.id)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+                    activeFilter === tab.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Delivery Channel Filters */}
+            <div className="flex items-center gap-2 overflow-x-auto">
+              <span className="text-xs font-bold text-slate-400 mr-1 shrink-0">Channel:</span>
+              {(
+                [
+                  { id: 'all', label: 'All Channels', icon: Filter },
+                  { id: 'whatsapp', label: 'WhatsApp', icon: Share2 },
+                  { id: 'sms', label: 'SMS Gateway', icon: MessageSquare },
+                  { id: 'push', label: 'In-App Push', icon: Smartphone },
+                ] as const
+              ).map((channelTab) => {
+                const Icon = channelTab.icon;
+                return (
+                  <button
+                    key={channelTab.id}
+                    onClick={() => setActiveChannelFilter(channelTab.id)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-1.5 ${
+                      activeChannelFilter === channelTab.id
+                        ? 'bg-slate-900 text-white'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Icon className="w-3 h-3" />
+                    <span>{channelTab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Notifications List */}
@@ -129,8 +260,8 @@ export default function NotificationsPage() {
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
                   {language === 'hi'
-                    ? 'इस श्रेणी में वर्तमान में कोई नए अलर्ट नहीं हैं।'
-                    : 'You are all caught up in this category.'}
+                    ? 'इस श्रेणी या चैनल में वर्तमान में कोई नए अलर्ट नहीं हैं।'
+                    : 'You are all caught up in this category or channel.'}
                 </p>
               </div>
             ) : (
@@ -152,10 +283,29 @@ export default function NotificationsPage() {
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <h4 className="font-bold text-slate-900 text-sm">
                           {language === 'hi' && item.titleHi ? item.titleHi : item.title}
                         </h4>
+
+                        {/* Channel Badge */}
+                        {item.channel === 'whatsapp' ? (
+                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 flex items-center gap-1">
+                            <Share2 className="w-2.5 h-2.5" />
+                            WhatsApp
+                          </span>
+                        ) : item.channel === 'sms' ? (
+                          <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200 flex items-center gap-1">
+                            <MessageSquare className="w-2.5 h-2.5" />
+                            SMS Gateway
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <Smartphone className="w-2.5 h-2.5" />
+                            In-App Push
+                          </span>
+                        )}
+
                         {!item.read && (
                           <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
                         )}
@@ -165,9 +315,21 @@ export default function NotificationsPage() {
                         {language === 'hi' && item.messageHi ? item.messageHi : item.message}
                       </p>
 
-                      <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-2">
-                        <Clock className="w-3 h-3" />
-                        <span>{item.timestamp}</span>
+                      <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-2">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{item.timestamp}</span>
+                        </span>
+                        {item.recipientName && (
+                          <span className="text-slate-500">
+                            Recipient: <strong className="text-slate-700">{item.recipientName}</strong>
+                          </span>
+                        )}
+                        {item.deliveryStatus && (
+                          <span className="text-emerald-600 font-semibold">
+                            ✓ {item.deliveryStatus}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

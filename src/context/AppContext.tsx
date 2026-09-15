@@ -60,6 +60,7 @@ interface AppContextType {
 
   notifications: NotificationItem[];
   unreadNotificationsCount: number;
+  addNotification: (item: Omit<NotificationItem, 'id' | 'timestamp' | 'read'>) => NotificationItem;
   markNotificationAsRead: (id: string) => void;
   markAllNotificationsAsRead: () => void;
 
@@ -573,6 +574,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
 
+  const addNotification = (
+    item: Omit<NotificationItem, 'id' | 'timestamp' | 'read'>
+  ): NotificationItem => {
+    const newItem: NotificationItem = {
+      ...item,
+      id: 'notif-' + Date.now(),
+      timestamp: 'Just now',
+      read: false,
+    };
+    setNotifications((prev) => [newItem, ...prev]);
+    fetch('/api/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newItem),
+    }).catch(() => {});
+    return newItem;
+  };
+
   const markNotificationAsRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
@@ -707,6 +726,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addConsultation,
         notifications,
         unreadNotificationsCount,
+        addNotification,
         markNotificationAsRead,
         markAllNotificationsAsRead,
         activeReminder,

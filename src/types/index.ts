@@ -248,6 +248,8 @@ export interface Consultation {
   attachedReportNames?: string[];
 }
 
+export type NotificationChannel = 'push' | 'whatsapp' | 'sms' | 'email';
+
 export interface NotificationItem {
   id: string;
   userId: string;
@@ -259,6 +261,10 @@ export interface NotificationItem {
   timestamp: string;
   read: boolean;
   actionUrl?: string;
+  channel?: NotificationChannel;
+  recipientPhone?: string;
+  recipientName?: string;
+  deliveryStatus?: 'delivered' | 'pending' | 'failed';
 }
 
 export interface ChatMessage {

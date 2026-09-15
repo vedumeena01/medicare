@@ -1,7 +1,7 @@
 # 🩺 Medicare AI (MediExplain)
 ### Multilingual Medical Report & Prescription Simplifier Platform
 
-[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(101%2F101)-brightgreen.svg)](#)
+[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(110%2F110)-brightgreen.svg)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black.svg)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -18,7 +18,8 @@ Medicare is a comprehensive healthcare web application designed to simplify medi
 - **🔬 Real-Time Scanner Safety Screening**: Live cross-screening of detected drugs against active prescriptions & allergies directly inside the camera scanner HUD.
 - **🚨 Emergency Medical ID (ICE)**: Rapid paramedic/triage access to Blood Group, Drug Allergies, Next-of-Kin contacts, and active meds at `/emergency`.
 - **🛡️ Drug-Drug Interaction Checker**: Screen multiple active medications for cross-drug clashes, penicillin/paracetamol allergies, and food timing rules.
-- **💊 Prescription Scheduler & Alarms**: Automatically extracts drug dosages into daily interactive schedules with real-time dose reminder alerts.
+- **💊 Multi-Channel Dose Reminders & Alarms**: Schedule daily doses with automated audio alerts, plus 1-click **WhatsApp** and **SMS Gateway** reminder dispatch for family caregivers.
+- **🏥 HL7 FHIR R4 Health Vault & Clinical CSV**: Export standards-compliant FHIR Release 4 JSON bundles and RFC 4180 clinical spreadsheets for modern hospital and EMR integration.
 - **📊 Health Command Center**: Computes an aggregate Health Score with visual Cardiovascular and Diabetes Risk stratification meters.
 - **🩺 Specialist Directory & Appointments**: Book in-person clinic visits or video tele-consultations with verified cardiologists, endocrinologists, physicians, and pulmonologists.
 - **🤖 Live AI Clinical Assistant**: Context-aware clinical chat for symptom guidance and dietary inquiries with non-diagnostic safety guardrails.

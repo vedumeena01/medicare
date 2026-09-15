@@ -70,6 +70,7 @@ async function runTestSuite() {
     'src/components/ServiceWorkerRegister.tsx',
     'src/components/CaregiverProfileSwitcher.tsx',
     'src/lib/fhirExport.ts',
+    'src/lib/reminderNotification.ts',
   ];
 
   for (const file of requiredFiles) {
@@ -273,6 +274,26 @@ async function runTestSuite() {
 
   const reportsPageContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'reports', 'page.tsx'), 'utf-8');
   assert(reportsPageContent.includes('downloadFhirBundle'), 'Reports history page offers 1-click FHIR vault export');
+
+  // ---------------------------------------------------------
+  // TEST SUITE 8: Multi-Channel Dose Reminders (WhatsApp & SMS Dispatch Engine)
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 8: Multi-Channel Dose Reminders (WhatsApp & SMS Dispatch Engine)');
+
+  const reminderFileContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'reminderNotification.ts'), 'utf-8');
+  assert(reminderFileContent.includes('formatDoseReminderMessage'), 'reminderNotification exports formatDoseReminderMessage');
+  assert(reminderFileContent.includes('generateWhatsAppReminderUrl'), 'reminderNotification exports generateWhatsAppReminderUrl');
+  assert(reminderFileContent.includes('generateSmsReminderUrl'), 'reminderNotification exports generateSmsReminderUrl');
+  assert(reminderFileContent.includes('simulateChannelDispatch'), 'reminderNotification exports simulateChannelDispatch');
+
+  assert(appContextContent.includes('addNotification'), 'AppContext exposes addNotification method');
+
+  const schedulesContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'schedules', 'page.tsx'), 'utf-8');
+  assert(schedulesContent.includes('generateWhatsAppReminderUrl'), 'Schedules page triggers WhatsApp dose reminders');
+
+  const notificationsContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'notifications', 'page.tsx'), 'utf-8');
+  assert(notificationsContent.includes('activeChannelFilter'), 'Notifications page supports channel-level filtering');
+  assert(notificationsContent.includes('Multi-Channel Reminder Test Dispatcher'), 'Notifications page includes multi-channel reminder simulator');
 
   // ---------------------------------------------------------
   // Summary & Final Exit
