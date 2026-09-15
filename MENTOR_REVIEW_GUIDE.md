@@ -25,21 +25,22 @@ Diagnostic lab reports and physician prescriptions contain vital health informat
 | Step | Action | Direct URL / Trigger | What to Notice |
 |---|---|---|---|
 | **1. Authentication** | Log in with any demo email/mobile | `http://localhost:3000/login` | Click **"Continue with OTP"** &rarr; click **"Autofill Demo Code (123456)"** &rarr; instant validation. |
-| **2. Executive Dashboard** | Review patient vitals & risk scores | `http://localhost:3000/dashboard` | **Health Score: 84/100**, Cardiovascular & Diabetes Risk Meters, Today's Medicine checklist (interactive Taken/Skip). |
-| **3. Instant Demo Mode** | Load 4 pre-configured reports | Click **"⚡ Load Demo Reports"** | Populates 4 clinical reports, 5 medicines, and 2 appointments in 1 second. |
-| **4. AI Report Extraction** | Test OCR & analysis pipeline | `http://localhost:3000/analyze` | 4 sample report cards (CBC, HbA1c, Thyroid, Rx). Click **"Analyze"** to observe 5-step animated scanning engine. |
-| **5. Bilingual Summary** | View report breakdown in EN / HI | `http://localhost:3000/reports/rep-cbc-june-2026` | Low Hb (10.8) and High Sugar (140) flagged in red; toggle English &lt;&gt; Hindi navbar icon to view full translation. |
-| **6. Medicine & Schedule** | Medication tracker & alarm simulation | `http://localhost:3000/medicines` | Click **"Trigger Dose Reminder Alarm"** to test mobile reminder modal. View chronological schedule on `/schedules`. |
-| **7. Doctor Consultation** | Specialist directory & booking | `http://localhost:3000/appointments` | Filter by Cardiologist, book video/in-person slot, attach lab reports. |
-| **8. AI Clinical Assistant** | Context-aware Q&A with disclaimers | `http://localhost:3000/assistant` | Ask *"What foods reduce LDL cholesterol?"* — observe clinical citations, nutritional suggestions, and disclaimers. |
+| **2. Executive Dashboard & Sandbox** | Review vitals & select clinical persona | `http://localhost:3000/dashboard` | **Interactive Evaluator Sandbox**: Switch between 3 personas (Diabetic, Post-Op, Thyroid) with 1-click walkthroughs. |
+| **3. Instant Demo Mode** | Load 4 pre-configured reports | Click **"⚡ Load Complete Demo Pack"** | Populates 4 clinical reports, 5 medicines, and 2 appointments in 1 second. |
+| **4. Live AR Medicine Scanner** | Test camera OCR & audio readout | `http://localhost:3000/medicines/scanner` | Real-time WebRTC camera feed, drug alignment reticle, audio TTS reading dosage aloud. |
+| **5. Drug-Drug Interactions** | Screen active prescriptions & allergies | `http://localhost:3000/medicines/interactions` | Automatic allergy cross-checking (e.g. Penicillin conflict) and food timing rules. |
+| **6. AI Report Extraction** | Test OCR & analysis pipeline | `http://localhost:3000/analyze` | 4 sample report cards (CBC, HbA1c, Thyroid, Rx). Click **"Analyze"** to observe 5-step animated scanning engine. |
+| **7. Bilingual Summary** | View report breakdown in EN / HI | `http://localhost:3000/reports/rep-cbc-june-2026` | Low Hb (10.8) and High Sugar (140) flagged in red; toggle English &lt;&gt; Hindi navbar icon to view full translation. |
+| **8. Automated Quality Suite** | Run single-command health check | In terminal: `npm test` | **69/69 automated assertions passing 100%** across schema, clinical math, and localization. |
 
 ---
 
 ## 🏗️ Technical Architecture & Key Highlights
 
 ### 1. Frontend & Routing
-- **Framework**: Next.js 16.3 (App Router with dynamic server & client components).
-- **Type Safety**: 100% strict TypeScript (`tsconfig.json`) — **0 build errors across all 31 application routes**.
+- **Framework**: Next.js 16.3.4 (App Router with Turbopack, dynamic server & client components).
+- **Type Safety**: 100% strict TypeScript (`tsconfig.json`) — **0 build errors across all 37 application routes**.
+- **Automated Verification**: `npm test` runs 69 assertions across file integrity, local JSON DB, drug conflict heuristics, and bilingual token parity.
 - **Styling**: Modern, responsive healthcare UI utilizing Tailwind CSS v4, custom glassmorphic cards, and semantic HSL risk color tokens.
 - **Accessibility**: Dual-language context (`LanguageContext`) with synchronous language switching across all pages, forms, and alerts.
 

@@ -1,9 +1,9 @@
 {
   "user": {
-    "id": "user-1",
+    "id": "usr-google-1789378796808",
     "name": "Vedprakash",
     "email": "vedprakash@example.com",
-    "mobile": "+91 98765 43210",
+    "mobile": "+91 98765 00000",
     "age": 28,
     "gender": "Male",
     "language": "en",
@@ -15,7 +15,8 @@
     "bloodGroup": "B+",
     "allergies": [
       "Penicillin (Mild)"
-    ]
+    ],
+    "avatarUrl": "https://api.dicebear.com/7.x/initials/svg?seed=Vedprakash"
   },
   "reports": [
     {
@@ -1151,5 +1152,5 @@
       "actionUrl": "/settings"
     }
   ],
-  "lastUpdated": "2026-09-10T03:29:04.692Z"
+  "lastUpdated": "2026-09-14T09:39:56.859Z"
 }

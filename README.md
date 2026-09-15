@@ -9,11 +9,13 @@ Medicare is a comprehensive healthcare web application designed to simplify medi
 
 - **📄 Multimodal AI Report Analysis**: Upload PDF, JPG, or PNG lab reports (CBC, Thyroid, Lipid, Metabolic, Diabetes HbA1c) and receive structured breakdowns of abnormal vs normal parameters.
 - **🌐 Dual-Language Support (English & Hindi)**: Full synchronous translation across all reports, medical glossaries, doctor questions, and interface elements.
-- **💊 Prescription Scanner & Scheduler**: Automatically extracts drug names, strengths, frequencies, and meal instructions (e.g. *after lunch*, *empty stomach*) into daily interactive schedules with reminder alarms.
-- **📊 Health Command Center**: Computes an aggregate Health Score (e.g. 84/100) with visual Cardiovascular and Diabetes Risk stratification meters.
+- **📸 Live AR Camera Scanner**: Real-time camera optical recognition for medicine strips, boxes, and prescriptions with audio TTS instructions.
+- **🛡️ Drug-Drug Interaction Checker**: Screen multiple active medications for cross-drug clashes, penicillin/paracetamol allergies, and food timing rules.
+- **💊 Prescription Scheduler & Alarms**: Automatically extracts drug dosages into daily interactive schedules with real-time dose reminder alerts.
+- **📊 Health Command Center**: Computes an aggregate Health Score with visual Cardiovascular and Diabetes Risk stratification meters.
 - **🩺 Specialist Directory & Appointments**: Book in-person clinic visits or video tele-consultations with verified cardiologists, endocrinologists, physicians, and pulmonologists.
 - **🤖 Live AI Clinical Assistant**: Context-aware clinical chat for symptom guidance and dietary inquiries with non-diagnostic safety guardrails.
-- **⚡ Instant 1-Click Demo Mode**: Includes 4 authentic sample clinical reports and 1-click loading for instant presentations and evaluation.
+- **⚡ Evaluator Sandbox & Persona Selector**: 3 one-click clinical personas (Diabetic, Post-Op, Thyroid) with 1-click demo restoration or clean wipe.
 
 ---
 
@@ -32,12 +34,11 @@ cd medicare
 npm install
 ```
 
-### 3. Environment Configuration
-Create a `.env.local` file in the project root:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
+### 3. Automated Health Verification Suite
+```bash
+# Run the 69-point automated smoke test & health check
+npm test
 ```
-*(The platform runs gracefully with built-in heuristic clinical fallback even without an API key).*
 
 ### 4. Run Development Server
 ```bash
@@ -49,7 +50,7 @@ Open [http://localhost:3000](http://localhost:3000) in your web browser.
 ```bash
 npm run build
 ```
-Builds cleanly with **0 TypeScript errors** across all 31 application routes.
+Builds cleanly with **0 TypeScript errors** across all 37 application routes.
 
 ---
 

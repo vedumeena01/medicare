@@ -115,6 +115,21 @@ export const translations = {
     dosageLabel: "Prescribed Dose",
     instructionsLabel: "Instructions",
     
+    // Live Scanner
+    liveScannerTitle: "Live AR Medicine & Prescription Scanner",
+    liveScannerSubtitle: "Point your camera at a medicine strip, bottle, or doctor's prescription for instant AI recognition.",
+    captureSnapshot: "Capture Snapshot",
+    retake: "Retake",
+    scanningPackaging: "Scanning Packaging...",
+    alignTarget: "Align medicine name or prescription inside the frame",
+    voiceReadout: "Listen to Instructions",
+    addToSchedule: "Add to Schedule & Set Reminder",
+    flipCamera: "Flip Camera",
+    torch: "Flashlight",
+    sampleStripPreset: "Blister Strip Preset",
+    sampleRxPreset: "Doctor Rx Preset",
+    sampleBoxPreset: "Box Packaging Preset",
+    
     // Errors & States
     noReportsYet: "No reports yet",
     uploadFirstReport: "Upload your first medical report to start understanding your health information.",
@@ -239,6 +254,21 @@ export const translations = {
     frequencyLabel: "आवृत्ति (Frequency)",
     dosageLabel: "निर्धारित खुराक",
     instructionsLabel: "निर्देश",
+    
+    // Live Scanner
+    liveScannerTitle: "लाइव दवा व प्रिस्क्रिप्शन स्कैनर",
+    liveScannerSubtitle: "तुरंत एआई पहचान के लिए अपने कैमरे को दवा की स्ट्रिप, शीशी, या डॉक्टर के पर्चे के सामने रखें।",
+    captureSnapshot: "फोटो खींचें",
+    retake: "दोबारा फोटो लें",
+    scanningPackaging: "दवा की पहचान की जा रही है...",
+    alignTarget: "दवा का नाम या पर्चा फ्रेम के भीतर रखें",
+    voiceReadout: "निर्देश बोलकर सुनें",
+    addToSchedule: "शेड्यूल में जोड़ें और अलार्म लगाएं",
+    flipCamera: "कैमरा बदलें",
+    torch: "फ़्लैशलाइट",
+    sampleStripPreset: "दवा स्ट्रिप नमूना",
+    sampleRxPreset: "डॉक्टर का पर्चा नमूना",
+    sampleBoxPreset: "दवा बॉक्स नमूना",
     
     // Errors & States
     noReportsYet: "अभी तक कोई रिपोर्ट नहीं है",

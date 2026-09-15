@@ -30,6 +30,7 @@ import Sidebar from '@/components/Sidebar';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import HealthRiskCard from '@/components/HealthRiskCard';
 import HealthTrendChart from '@/components/HealthTrendChart';
+import ClientDemoTour from '@/components/ClientDemoTour';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -90,6 +91,9 @@ export default function DashboardPage() {
               </Link>
             </div>
           </div>
+
+          {/* Interactive Client Demo & Evaluator Sandbox */}
+          <ClientDemoTour />
 
           {/* Clean Patient Onboarding for New Users / Empty State */}
           {reports.length === 0 && (
