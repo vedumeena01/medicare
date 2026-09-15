@@ -163,6 +163,31 @@ export interface FamilyMember {
   gender: 'Male' | 'Female' | 'Other';
   avatar?: string;
   healthConditions?: string[];
+  bloodGroup?: string;
+  allergies?: string[];
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relation: string;
+  };
+}
+
+export interface ActiveProfile {
+  id: string;
+  isSelf: boolean;
+  name: string;
+  relationship: string;
+  relationshipHi?: string;
+  age: number;
+  gender: string;
+  bloodGroup: string;
+  allergies: string[];
+  emergencyContact: {
+    name: string;
+    phone: string;
+    relation: string;
+  };
+  healthConditions: string[];
 }
 
 export interface Doctor {

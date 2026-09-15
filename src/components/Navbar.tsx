@@ -20,6 +20,7 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import { useApp } from '@/context/AppContext';
 import LanguageSelector from './LanguageSelector';
+import CaregiverProfileSwitcher from './CaregiverProfileSwitcher';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -97,7 +98,8 @@ export default function Navbar() {
         )}
 
         {/* Right Action Area */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {isAuthenticated && <CaregiverProfileSwitcher compact />}
           <LanguageSelector />
 
           {/* Search button on mobile or dashboard */}

@@ -68,6 +68,7 @@ async function runTestSuite() {
     'public/manifest.json',
     'public/sw.js',
     'src/components/ServiceWorkerRegister.tsx',
+    'src/components/CaregiverProfileSwitcher.tsx',
   ];
 
   for (const file of requiredFiles) {
@@ -234,6 +235,25 @@ async function runTestSuite() {
     const hasKey = translationsFile.includes(`${key}:`);
     assert(hasKey, `Translation dictionary contains token: "${key}"`);
   }
+
+  // ---------------------------------------------------------
+  // TEST SUITE 6: Caregiver Multi-Profile Dependent Context
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 6: Caregiver Multi-Profile Contracts & State');
+
+  const appContextContent = fs.readFileSync(path.join(rootDir, 'src', 'context', 'AppContext.tsx'), 'utf-8');
+  assert(appContextContent.includes('activeMemberId'), 'AppContext defines activeMemberId state');
+  assert(appContextContent.includes('activeProfile'), 'AppContext exposes memoized activeProfile');
+
+  const navbarContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'Navbar.tsx'), 'utf-8');
+  assert(navbarContent.includes('CaregiverProfileSwitcher'), 'Navbar mounts CaregiverProfileSwitcher');
+
+  const familyPageContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'family', 'page.tsx'), 'utf-8');
+  assert(familyPageContent.includes('setActiveMemberId'), 'FamilyPage enables 1-click dependent context switching');
+
+  const sampleDataContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'sampleData.ts'), 'utf-8');
+  assert(sampleDataContent.includes("'Sulfa drugs'"), 'Father dependent has documented Sulfa allergy');
+  assert(sampleDataContent.includes("'Aspirin (Mild)'"), 'Mother dependent has documented Aspirin allergy');
 
   // ---------------------------------------------------------
   // Summary & Final Exit

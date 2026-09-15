@@ -10,6 +10,7 @@ import {
   Appointment,
   Consultation,
   NotificationItem,
+  ActiveProfile,
 } from '@/types';
 import {
   sampleUser,
@@ -30,6 +31,10 @@ interface AppContextType {
   loginWithGoogle: (email: string, name?: string, avatarUrl?: string) => boolean;
   logout: () => void;
   updateUser: (updated: Partial<UserProfile>) => void;
+
+  activeMemberId: string | null;
+  setActiveMemberId: (id: string | null) => void;
+  activeProfile: ActiveProfile;
 
   reports: MedicalReport[];
   addReport: (report: MedicalReport) => void;
@@ -86,6 +91,77 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const [activeReminder, setActiveReminder] = useState<Medicine | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [activeMemberId, setActiveMemberIdState] = useState<string | null>(null);
+
+  const setActiveMemberId = (id: string | null) => {
+    setActiveMemberIdState(id);
+    if (id) {
+      localStorage.setItem('medicare_active_member', id);
+    } else {
+      localStorage.removeItem('medicare_active_member');
+    }
+  };
+
+  const activeProfile: ActiveProfile = React.useMemo(() => {
+    if (!activeMemberId || activeMemberId === 'self' || activeMemberId === 'fam-1') {
+      return {
+        id: 'self',
+        isSelf: true,
+        name: user?.name || 'Vedprakash',
+        relationship: 'Self',
+        relationshipHi: 'स्वयं',
+        age: user?.age || 28,
+        gender: user?.gender || 'Male',
+        bloodGroup: user?.bloodGroup || 'B+',
+        allergies: user?.allergies || ['Penicillin (Mild)'],
+        emergencyContact: user?.emergencyContact || {
+          name: 'Ramesh (Father)',
+          phone: '+91 98765 11111',
+          relation: 'Father',
+        },
+        healthConditions: ['Mild Vitamin D deficiency'],
+      };
+    }
+
+    const found = familyMembers.find((m) => m.id === activeMemberId);
+    if (found) {
+      return {
+        id: found.id,
+        isSelf: false,
+        name: found.name,
+        relationship: found.relation,
+        relationshipHi: found.relationHi,
+        age: found.age,
+        gender: found.gender,
+        bloodGroup: found.bloodGroup || 'B+',
+        allergies: found.allergies || ['No known drug allergies'],
+        emergencyContact: found.emergencyContact || {
+          name: user?.name || 'Vedprakash',
+          phone: user?.mobile || '+91 98765 43210',
+          relation: 'Primary Caregiver',
+        },
+        healthConditions: found.healthConditions || [],
+      };
+    }
+
+    return {
+      id: 'self',
+      isSelf: true,
+      name: user?.name || 'Vedprakash',
+      relationship: 'Self',
+      relationshipHi: 'स्वयं',
+      age: user?.age || 28,
+      gender: user?.gender || 'Male',
+      bloodGroup: user?.bloodGroup || 'B+',
+      allergies: user?.allergies || ['Penicillin (Mild)'],
+      emergencyContact: user?.emergencyContact || {
+        name: 'Ramesh (Father)',
+        phone: '+91 98765 11111',
+        relation: 'Father',
+      },
+      healthConditions: ['Mild Vitamin D deficiency'],
+    };
+  }, [activeMemberId, user, familyMembers]);
 
   // Initialize from persistent backend database with LocalStorage fallback
   useEffect(() => {
@@ -95,9 +171,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const storedReports = localStorage.getItem('medicare_reports');
       const storedMedicines = localStorage.getItem('medicare_medicines');
       const storedFamily = localStorage.getItem('medicare_family');
+      const storedActiveMember = localStorage.getItem('medicare_active_member');
 
       // Schedule initial state hydration to avoid synchronous render cascades
       queueMicrotask(() => {
+        if (storedActiveMember) {
+          setActiveMemberIdState(storedActiveMember);
+        }
         if (storedAuth === 'false') {
           setUser(null);
           setIsAuthenticated(false);
@@ -605,6 +685,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         loginWithGoogle,
         logout,
         updateUser,
+        activeMemberId,
+        setActiveMemberId,
+        activeProfile,
         reports,
         addReport,
         deleteReport,

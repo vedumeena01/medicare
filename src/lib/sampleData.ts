@@ -25,7 +25,14 @@ export const sampleFamilyMembers: FamilyMember[] = [
     relationHi: 'स्वयं',
     age: 28,
     gender: 'Male',
-    healthConditions: ['Mild Vitamin D deficiency']
+    healthConditions: ['Mild Vitamin D deficiency'],
+    bloodGroup: 'B+',
+    allergies: ['Penicillin (Mild)'],
+    emergencyContact: {
+      name: 'Ramesh (Father)',
+      phone: '+91 98765 11111',
+      relation: 'Father',
+    }
   },
   {
     id: 'fam-2',
@@ -34,7 +41,14 @@ export const sampleFamilyMembers: FamilyMember[] = [
     relationHi: 'पिताजी',
     age: 58,
     gender: 'Male',
-    healthConditions: ['Hypertension', 'Pre-diabetes']
+    healthConditions: ['Hypertension', 'Pre-diabetes'],
+    bloodGroup: 'O+',
+    allergies: ['Sulfa drugs'],
+    emergencyContact: {
+      name: 'Vedprakash (Son)',
+      phone: '+91 98765 43210',
+      relation: 'Son',
+    }
   },
   {
     id: 'fam-3',
@@ -43,7 +57,14 @@ export const sampleFamilyMembers: FamilyMember[] = [
     relationHi: 'माताजी',
     age: 54,
     gender: 'Female',
-    healthConditions: ['Thyroid (Hypothyroidism)']
+    healthConditions: ['Thyroid (Hypothyroidism)'],
+    bloodGroup: 'A+',
+    allergies: ['Aspirin (Mild)'],
+    emergencyContact: {
+      name: 'Vedprakash (Son)',
+      phone: '+91 98765 43210',
+      relation: 'Son',
+    }
   },
   {
     id: 'fam-4',
@@ -52,7 +73,14 @@ export const sampleFamilyMembers: FamilyMember[] = [
     relationHi: 'बहन',
     age: 24,
     gender: 'Female',
-    healthConditions: ['Seasonal Allergies']
+    healthConditions: ['Seasonal Allergies'],
+    bloodGroup: 'B+',
+    allergies: ['Pollen', 'Dust'],
+    emergencyContact: {
+      name: 'Vedprakash (Brother)',
+      phone: '+91 98765 43210',
+      relation: 'Brother',
+    }
   }
 ];
 

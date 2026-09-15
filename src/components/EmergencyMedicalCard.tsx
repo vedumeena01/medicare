@@ -46,12 +46,14 @@ function drawRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
 }
 
 export default function EmergencyMedicalCard({ standalone = false }: EmergencyMedicalCardProps) {
-  const { user, medicines, reports } = useApp();
+  const { user, medicines, reports, activeProfile } = useApp();
   const { language } = useLanguage();
 
-  const allergies = user?.allergies || ['Penicillin (Mild)'];
-  const bloodGroup = user?.bloodGroup || 'B+';
-  const emergencyContact = user?.emergencyContact || {
+  const allergies = activeProfile.allergies && activeProfile.allergies.length > 0
+    ? activeProfile.allergies
+    : ['No Known Drug Allergies (NKDA)'];
+  const bloodGroup = activeProfile.bloodGroup || 'B+';
+  const emergencyContact = activeProfile.emergencyContact || {
     name: 'Ramesh (Father)',
     phone: '+91 98765 11111',
     relation: 'Father',
@@ -82,7 +84,7 @@ export default function EmergencyMedicalCard({ standalone = false }: EmergencyMe
     ctx.fillText('IN CASE OF EMERGENCY (I.C.E.)', 60, 100);
 
     ctx.font = 'bold 64px sans-serif';
-    ctx.fillText(user?.name?.toUpperCase() || 'VEDPRAKASH', 60, 195);
+    ctx.fillText(activeProfile.name.toUpperCase(), 60, 195);
 
     // Blood Group Section Box
     ctx.fillStyle = '#1e293b';
@@ -157,7 +159,7 @@ export default function EmergencyMedicalCard({ standalone = false }: EmergencyMe
 
     // Trigger download
     const link = document.createElement('a');
-    link.download = `ICE_Emergency_Lockscreen_${user?.name?.replace(/\s+/g, '_') || 'Patient'}.png`;
+    link.download = `ICE_Emergency_Lockscreen_${activeProfile.name.replace(/\s+/g, '_')}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
@@ -220,10 +222,10 @@ export default function EmergencyMedicalCard({ standalone = false }: EmergencyMe
             </div>
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md bg-white/20 text-white">
-                IN CASE OF EMERGENCY (ICE)
+                IN CASE OF EMERGENCY (ICE) {activeProfile.isSelf ? '' : `• ${activeProfile.relationship.toUpperCase()}`}
               </span>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight mt-0.5">
-                {user?.name || 'Vedprakash'}
+                {activeProfile.name}
               </h1>
             </div>
           </div>

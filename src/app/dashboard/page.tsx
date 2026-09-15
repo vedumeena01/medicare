@@ -35,7 +35,16 @@ import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function DashboardPage() {
-  const { user, reports, medicines, appointments, updateMedicineStatus, triggerDemoReminder } = useApp();
+  const {
+    user,
+    reports,
+    medicines,
+    appointments,
+    updateMedicineStatus,
+    triggerDemoReminder,
+    activeProfile,
+    setActiveMemberId,
+  } = useApp();
   const { t, language } = useLanguage();
 
   const primaryReport = reports[0];
@@ -45,6 +54,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
+      {/* Global Navigation Header */}
       <Navbar />
 
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
@@ -53,6 +63,41 @@ export default function DashboardPage() {
 
         {/* Main Dashboard Content Area */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 pb-24 lg:pb-12 overflow-x-hidden">
+          {/* Active Caregiver Mode Banner */}
+          {!activeProfile.isSelf && (
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md animate-in fade-in duration-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center font-black text-sm border border-white/20">
+                  {activeProfile.name[0]}
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-indigo-200">
+                    {language === 'hi' ? 'देखभालकर्ता मोड सक्रिय' : 'Caregiver Dependent Mode Active'}
+                  </p>
+                  <p className="text-sm font-bold">
+                    {language === 'hi' ? 'वर्तमान में स्वास्थ्य प्रोफाइल:' : 'Currently managing clinical profile for:'}{' '}
+                    <span className="underline font-black">{activeProfile.name} ({activeProfile.relationship})</span>
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/emergency"
+                  className="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition-colors"
+                >
+                  {language === 'hi' ? 'आपातकालीन ICE कार्ड' : 'View ICE Card'}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setActiveMemberId(null)}
+                  className="px-3.5 py-1.5 rounded-xl bg-white text-indigo-950 hover:bg-indigo-50 text-xs font-extrabold transition-colors shadow-xs"
+                >
+                  {language === 'hi' ? 'स्वयं पर वापस जाएं' : 'Switch Back to Self'}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Welcome Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
             <div className="space-y-1">
