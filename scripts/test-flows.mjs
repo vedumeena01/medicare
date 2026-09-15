@@ -69,6 +69,7 @@ async function runTestSuite() {
     'public/sw.js',
     'src/components/ServiceWorkerRegister.tsx',
     'src/components/CaregiverProfileSwitcher.tsx',
+    'src/lib/fhirExport.ts',
   ];
 
   for (const file of requiredFiles) {
@@ -254,6 +255,24 @@ async function runTestSuite() {
   const sampleDataContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'sampleData.ts'), 'utf-8');
   assert(sampleDataContent.includes("'Sulfa drugs'"), 'Father dependent has documented Sulfa allergy');
   assert(sampleDataContent.includes("'Aspirin (Mild)'"), 'Mother dependent has documented Aspirin allergy');
+
+  // ---------------------------------------------------------
+  // TEST SUITE 7: HL7 FHIR Release 4 & Clinical CSV Interoperability
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 7: HL7 FHIR R4 & Clinical CSV Interoperability');
+
+  const fhirFileContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'fhirExport.ts'), 'utf-8');
+  assert(fhirFileContent.includes('generateFhirBundle'), 'fhirExport exports generateFhirBundle');
+  assert(fhirFileContent.includes('generateClinicalCsv'), 'fhirExport exports generateClinicalCsv');
+  assert(fhirFileContent.includes('downloadFhirBundle'), 'fhirExport exports downloadFhirBundle');
+  assert(fhirFileContent.includes('downloadClinicalCsv'), 'fhirExport exports downloadClinicalCsv');
+
+  const settingsPageContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'settings', 'page.tsx'), 'utf-8');
+  assert(settingsPageContent.includes('downloadFhirBundle'), 'Settings page integrates FHIR R4 vault export');
+  assert(settingsPageContent.includes('downloadClinicalCsv'), 'Settings page integrates Clinical CSV export');
+
+  const reportsPageContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'reports', 'page.tsx'), 'utf-8');
+  assert(reportsPageContent.includes('downloadFhirBundle'), 'Reports history page offers 1-click FHIR vault export');
 
   // ---------------------------------------------------------
   // Summary & Final Exit

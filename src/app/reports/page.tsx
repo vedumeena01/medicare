@@ -20,9 +20,10 @@ import DisclaimerBanner from '@/components/DisclaimerBanner';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { ReportType } from '@/types';
+import { downloadFhirBundle } from '@/lib/fhirExport';
 
 export default function ReportsHistoryPage() {
-  const { reports, deleteReport } = useApp();
+  const { reports, deleteReport, activeProfile, medicines, user } = useApp();
   const { t, language } = useLanguage();
 
   const [search, setSearch] = useState('');
@@ -65,7 +66,17 @@ export default function ReportsHistoryPage() {
               </p>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <button
+                type="button"
+                onClick={() => downloadFhirBundle({ profile: activeProfile, reports, medicines, user })}
+                className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200/80 font-bold text-xs shadow-xs transition-all"
+                title="Export complete longitudinal medical history in HL7 FHIR Release 4 JSON format"
+              >
+                <Download className="w-4 h-4 text-blue-600" />
+                <span>Export FHIR Vault</span>
+              </button>
+
               <Link
                 href="/analyze"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all"

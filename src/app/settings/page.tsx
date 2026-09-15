@@ -18,11 +18,12 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 import GeminiKeyManager from '@/components/GeminiKeyManager';
+import { downloadFhirBundle, downloadClinicalCsv } from '@/lib/fhirExport';
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user, reports, medicines, resetToCleanState } = useApp();
-  const { t } = useLanguage();
+  const { user, reports, medicines, resetToCleanState, activeProfile } = useApp();
+  const { t, language } = useLanguage();
 
   const [notificationPrefs, setNotificationPrefs] = useState({
     medicineReminders: true,
@@ -206,30 +207,60 @@ export default function SettingsPage() {
                 </p>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-3 pt-1">
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
-                  <h4 className="text-xs font-bold text-slate-800">Export All Medical Records</h4>
-                  <p className="text-[11px] text-slate-500">
-                    Download complete JSON archive containing reports, lab findings, and medicine schedules.
+              <div className="grid sm:grid-cols-2 gap-4 pt-1">
+                {/* Standard HL7 FHIR R4 Vault Export */}
+                <div className="p-5 rounded-2xl bg-blue-50/50 border border-blue-200/80 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-blue-950 flex items-center gap-1.5">
+                      <Download className="w-4 h-4 text-blue-600" />
+                      <span>HL7 FHIR R4 Clinical Vault</span>
+                    </h4>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-blue-600 text-white">
+                      HL7 FHIR Standard
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    Export longitudinal EHR bundle (Patient, Observations, MedicationStatements, AllergyIntolerances) compatible with Epic, Cerner, Practo, and hospital systems.
                   </p>
-                  <button
-                    type="button"
-                    onClick={handleExportData}
-                    className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors"
-                  >
-                    <Download className="w-3.5 h-3.5 text-blue-600" />
-                    <span>{dataExported ? 'Downloaded!' : 'Export JSON'}</span>
-                  </button>
+                  <div className="text-[10px] font-bold text-slate-500 bg-white/70 p-2 rounded-xl border border-blue-100">
+                    Scope: <span className="text-blue-900">{activeProfile.name} ({activeProfile.relationship})</span> &bull; {reports.length} Reports &bull; {medicines.length} Medicines
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap pt-1">
+                    <button
+                      type="button"
+                      onClick={() => downloadFhirBundle({ profile: activeProfile, reports, medicines, user })}
+                      className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Export FHIR JSON (.json)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => downloadClinicalCsv({ profile: activeProfile, reports, medicines, user })}
+                      className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
+                    >
+                      <span>Export Excel / CSV (.csv)</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
-                  <h4 className="text-xs font-bold text-slate-800">Active Medical Storage</h4>
-                  <p className="text-[11px] text-slate-500">
-                    Currently managing {reports.length} reports and {medicines.length} prescription records.
-                  </p>
-                  <span className="inline-block text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md">
-                    End-to-End Encrypted
-                  </span>
+                {/* Storage & Privacy Status Card */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3 flex flex-col justify-between">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-slate-800">Health Data Storage</h4>
+                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                        Encrypted
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      All laboratory values, drug prescriptions, and clinical audit records are stored locally with zero third-party telemetry.
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200/60 text-xs text-slate-600 flex items-center justify-between">
+                    <span>Active Profile:</span>
+                    <span className="font-bold text-slate-900">{activeProfile.name}</span>
+                  </div>
                 </div>
               </div>
             </div>
