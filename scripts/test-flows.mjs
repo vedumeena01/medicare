@@ -61,6 +61,8 @@ async function runTestSuite() {
     'public/samples/Sample_HbA1c_Diabetes_Report.pdf',
     'public/samples/Sample_Thyroid_Profile_Report.pdf',
     'public/samples/Sample_Doctor_Prescription.pdf',
+    'src/components/EmergencyMedicalCard.tsx',
+    'src/app/emergency/page.tsx',
     'scripts/verify.bat',
     'scripts/verify.sh',
   ];
@@ -86,6 +88,8 @@ async function runTestSuite() {
   assert(dbContent.user && typeof dbContent.user.name === 'string', 'db.user has valid name');
   assert(dbContent.reports.length >= 4, `Database contains pre-seeded reports (found ${dbContent.reports.length})`);
   assert(dbContent.medicines.length >= 4, `Database contains pre-seeded medicines (found ${dbContent.medicines.length})`);
+  assert(dbContent.user.bloodGroup && typeof dbContent.user.bloodGroup === 'string', `User has Emergency Blood Group (${dbContent.user.bloodGroup})`);
+  assert(dbContent.user.emergencyContact && typeof dbContent.user.emergencyContact.phone === 'string', 'User has Emergency Next-of-Kin contact configured');
 
   // Verify Sample Report Schema
   const sampleReport = dbContent.reports[0];

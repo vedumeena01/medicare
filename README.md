@@ -1,7 +1,7 @@
 # 🩺 Medicare AI (MediExplain)
 ### Multilingual Medical Report & Prescription Simplifier Platform
 
-[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(71%2F71)-brightgreen.svg)](#)
+[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(75%2F75)-brightgreen.svg)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black.svg)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -15,6 +15,8 @@ Medicare is a comprehensive healthcare web application designed to simplify medi
 - **📄 Multimodal AI Report Analysis**: Upload PDF, JPG, or PNG lab reports (CBC, Thyroid, Lipid, Metabolic, Diabetes HbA1c) and receive structured breakdowns of abnormal vs normal parameters.
 - **🌐 Dual-Language Support (English & Hindi)**: Full synchronous translation across all reports, medical glossaries, doctor questions, and interface elements.
 - **📸 Live AR Camera Scanner**: Real-time camera optical recognition for medicine strips, boxes, and prescriptions with audio TTS instructions.
+- **🔬 Real-Time Scanner Safety Screening**: Live cross-screening of detected drugs against active prescriptions & allergies directly inside the camera scanner HUD.
+- **🚨 Emergency Medical ID (ICE)**: Rapid paramedic/triage access to Blood Group, Drug Allergies, Next-of-Kin contacts, and active meds at `/emergency`.
 - **🛡️ Drug-Drug Interaction Checker**: Screen multiple active medications for cross-drug clashes, penicillin/paracetamol allergies, and food timing rules.
 - **💊 Prescription Scheduler & Alarms**: Automatically extracts drug dosages into daily interactive schedules with real-time dose reminder alerts.
 - **📊 Health Command Center**: Computes an aggregate Health Score with visual Cardiovascular and Diabetes Risk stratification meters.
@@ -61,7 +63,7 @@ Open [http://localhost:3000](http://localhost:3000) in your web browser.
 ```bash
 npm run build
 ```
-Builds cleanly with **0 TypeScript errors** across all 37 application routes.
+Builds cleanly with **0 TypeScript errors** across all 38 application routes.
 
 ---
 

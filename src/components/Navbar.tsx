@@ -14,7 +14,8 @@ import {
   ArrowRight,
   FileText,
   Pill,
-  Calendar
+  Calendar,
+  ShieldAlert
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useApp } from '@/context/AppContext';
@@ -107,6 +108,17 @@ export default function Navbar() {
           >
             <Search className="w-5 h-5" />
           </button>
+
+          {/* Emergency Medical ID (ICE) Quick Access */}
+          <Link
+            href="/emergency"
+            title="Emergency Medical Card (ICE)"
+            aria-label="In Case of Emergency Medical ID Card"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black transition-colors"
+          >
+            <ShieldAlert className="w-4 h-4 text-rose-600" />
+            <span className="hidden sm:inline">ICE</span>
+          </Link>
 
           {/* Notifications Hub Link with Badge */}
           <Link
