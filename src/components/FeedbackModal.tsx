@@ -16,6 +16,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import { useApp } from '@/context/AppContext';
 import { FeedbackCategory } from '@/types';
 import { trackEvent } from '@/lib/analytics';
+import { isOnline, enqueueSyncAction } from '@/lib/offlineSync';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -68,6 +69,23 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     };
 
     try {
+      if (!isOnline()) {
+        enqueueSyncAction({
+          type: 'SUBMIT_FEEDBACK',
+          endpoint: '/api/feedback',
+          method: 'POST',
+          payload: payload as unknown as Record<string, unknown>,
+        }).catch(() => {});
+        trackEvent('feedback_saved_offline', { rating, category });
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setDescription('');
+          onClose();
+        }, 2200);
+        return;
+      }
+
       const res = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,7 +105,13 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
         throw new Error('Failed to save feedback');
       }
     } catch {
-      // Fallback local logging
+      // Fallback local logging & offline queue
+      enqueueSyncAction({
+        type: 'SUBMIT_FEEDBACK',
+        endpoint: '/api/feedback',
+        method: 'POST',
+        payload: payload as unknown as Record<string, unknown>,
+      }).catch(() => {});
       trackEvent('feedback_saved_offline', { rating, category });
       setSubmitted(true);
       setTimeout(() => {
@@ -101,15 +125,23 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="feedback-dialog-title"
+      className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+    >
       <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-7 relative space-y-5">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <div
+              className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100"
+              aria-hidden="true"
+            >
               <MessageSquare className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-base">
+              <h3 id="feedback-dialog-title" className="font-bold text-slate-900 text-base">
                 {language === 'hi' ? 'प्रतिक्रिया व सुझाव साझा करें' : 'Share Feedback & Report Issues'}
               </h3>
               <p className="text-xs text-slate-500">
@@ -123,7 +155,8 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
+            aria-label={language === 'hi' ? 'डायलॉग बंद करें' : 'Close feedback dialog'}
+            className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition focus-visible:ring-2 focus-visible:ring-blue-600"
           >
             <X className="w-5 h-5" />
           </button>

@@ -59,8 +59,9 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200/60 bg-gradient-to-b from-blue-50/60 via-white to-slate-50">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200/60 bg-gradient-to-b from-blue-50/60 via-white to-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Left Content */}
@@ -429,6 +430,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      </main>
 
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 py-10">

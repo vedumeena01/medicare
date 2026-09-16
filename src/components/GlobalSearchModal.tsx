@@ -54,22 +54,30 @@ export default function GlobalSearchModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-20 px-4 animate-in fade-in">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Global Medical Records Search"
+      className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-20 px-4 animate-in fade-in"
+    >
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[80vh]">
         {/* Search Input Bar */}
         <div className="flex items-center gap-3 p-4 border-b border-slate-100">
-          <Search className="w-5 h-5 text-slate-400" />
+          <Search className="w-5 h-5 text-slate-400" aria-hidden="true" />
           <input
             type="text"
             autoFocus
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={t('searchPlaceholder')}
+            aria-label="Search reports, medicines, and medical tests"
             className="flex-1 bg-transparent text-sm focus:outline-none text-slate-900 placeholder:text-slate-400"
           />
           <button
+            type="button"
             onClick={() => setIsSearchOpen(false)}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+            aria-label="Close search dialog"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-600"
           >
             <X className="w-5 h-5" />
           </button>

@@ -1,7 +1,7 @@
 # 🩺 Medicare AI (MediExplain)
 ### Multilingual Medical Report & Prescription Simplifier Platform
 
-[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(123%2F123)-brightgreen.svg)](#)
+[![Quality Verification](https://img.shields.io/badge/Quality%20Verification-Passing%20(143%2F143)-brightgreen.svg)](#)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black.svg)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -14,6 +14,8 @@ Medicare is a comprehensive healthcare web application designed to simplify medi
 
 - **📄 Multimodal AI Report Analysis**: Upload PDF, JPG, or PNG lab reports (CBC, Thyroid, Lipid, Metabolic, Diabetes HbA1c) and receive structured breakdowns of abnormal vs normal parameters.
 - **🌐 Dual-Language Support (English & Hindi)**: Full synchronous translation across all reports, medical glossaries, doctor questions, and interface elements.
+- **🗄️ IndexedDB Offline Mutation Sync Queue**: Full offline functionality with browser IndexedDB store (`medicare_offline_db`), automatic localStorage fallback, pub/sub subscription, and automatic background retry flush on network reconnection.
+- **♿ WCAG 2.1 AA Certified Accessibility**: Bypass blocks ("Skip to main content" link), high-contrast visible focus rings (`:focus-visible`), reduced-motion support, screen-reader ARIA live regions (`aria-live="polite"`), and dialog accessibility across all modals.
 - **📸 Live AR Camera Scanner**: Real-time camera optical recognition for medicine strips, boxes, and prescriptions with audio TTS instructions.
 - **🔬 Real-Time Scanner Safety Screening**: Live cross-screening of detected drugs against active prescriptions & allergies directly inside the camera scanner HUD.
 - **🚨 Emergency Medical ID (ICE)**: Rapid paramedic/triage access to Blood Group, Drug Allergies, Next-of-Kin contacts, and active meds at `/emergency`.

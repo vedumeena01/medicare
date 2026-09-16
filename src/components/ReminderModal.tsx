@@ -22,11 +22,17 @@ export default function ReminderModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+    <div
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="reminder-dose-title"
+      aria-describedby="reminder-dose-desc"
+      className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+    >
       {/* Smartphone frame styling matching Mockup 14 */}
       <div className="w-full max-w-sm bg-slate-900 text-white rounded-[2.5rem] p-3 shadow-2xl border-4 border-slate-700/60 relative overflow-hidden">
         {/* Dynamic Island / Notch */}
-        <div className="w-24 h-4 bg-black rounded-full mx-auto mb-4"></div>
+        <div className="w-24 h-4 bg-black rounded-full mx-auto mb-4" aria-hidden="true"></div>
 
         {/* Smartphone Screen Inner */}
         <div className="bg-gradient-to-b from-slate-800 to-slate-950 rounded-[2rem] p-5 space-y-5 border border-slate-700/50">
@@ -43,7 +49,10 @@ export default function ReminderModal() {
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 space-y-2 shadow-lg">
             <div className="flex items-center justify-between text-xs text-blue-300 font-semibold">
               <div className="flex items-center gap-1.5">
-                <div className="w-4 h-4 rounded-md bg-blue-500 flex items-center justify-center text-white text-[10px]">
+                <div
+                  className="w-4 h-4 rounded-md bg-blue-500 flex items-center justify-center text-white text-[10px]"
+                  aria-hidden="true"
+                >
                   +
                 </div>
                 <span>MediCare AI</span>
@@ -52,11 +61,11 @@ export default function ReminderModal() {
             </div>
 
             <div className="space-y-0.5">
-              <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+              <h4 id="reminder-dose-title" className="text-sm font-bold text-white flex items-center gap-1.5">
                 Time to take {activeReminder.name}
-                <span className="text-xs">💊</span>
+                <span className="text-xs" aria-hidden="true">💊</span>
               </h4>
-              <p className="text-xs text-slate-300">
+              <p id="reminder-dose-desc" className="text-xs text-slate-300">
                 {language === 'hi' && activeReminder.dosageInstructionHi
                   ? activeReminder.dosageInstructionHi
                   : activeReminder.dosageInstruction}

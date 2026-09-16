@@ -23,6 +23,7 @@ import {
   sampleNotifications,
 } from '@/lib/sampleData';
 import { triggerBrowserMedicineAlert } from '@/lib/alarmSound';
+import { isOnline, enqueueSyncAction } from '@/lib/offlineSync';
 
 interface AppContextType {
   user: UserProfile | null;
@@ -406,11 +407,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('medicare_medicines', JSON.stringify(next));
       return next;
     });
-    fetch('/api/medicines', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newMed),
-    }).catch(() => {});
+    if (!isOnline()) {
+      enqueueSyncAction({
+        type: 'SYNC_MEDICINE',
+        endpoint: '/api/medicines',
+        method: 'POST',
+        payload: newMed as unknown as Record<string, unknown>,
+      }).catch(() => {});
+    } else {
+      fetch('/api/medicines', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMed),
+      }).catch(() => {
+        enqueueSyncAction({
+          type: 'SYNC_MEDICINE',
+          endpoint: '/api/medicines',
+          method: 'POST',
+          payload: newMed as unknown as Record<string, unknown>,
+        }).catch(() => {});
+      });
+    }
     return newMed;
   };
 
@@ -432,11 +449,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('medicare_medicines', JSON.stringify(next));
       return next;
     });
-    fetch('/api/medicines', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status }),
-    }).catch(() => {});
+
+    const payload = { id, status };
+    if (!isOnline()) {
+      enqueueSyncAction({
+        type: 'UPDATE_MEDICINE_STATUS',
+        endpoint: '/api/medicines',
+        method: 'PATCH',
+        payload,
+      }).catch(() => {});
+    } else {
+      fetch('/api/medicines', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(() => {
+        enqueueSyncAction({
+          type: 'UPDATE_MEDICINE_STATUS',
+          endpoint: '/api/medicines',
+          method: 'PATCH',
+          payload,
+        }).catch(() => {});
+      });
+    }
   };
 
   const deleteMedicine = (id: string) => {
@@ -584,11 +619,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       read: false,
     };
     setNotifications((prev) => [newItem, ...prev]);
-    fetch('/api/notifications', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newItem),
-    }).catch(() => {});
+    if (!isOnline()) {
+      enqueueSyncAction({
+        type: 'ADD_NOTIFICATION',
+        endpoint: '/api/notifications',
+        method: 'POST',
+        payload: newItem as unknown as Record<string, unknown>,
+      }).catch(() => {});
+    } else {
+      fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItem),
+      }).catch(() => {
+        enqueueSyncAction({
+          type: 'ADD_NOTIFICATION',
+          endpoint: '/api/notifications',
+          method: 'POST',
+          payload: newItem as unknown as Record<string, unknown>,
+        }).catch(() => {});
+      });
+    }
     return newItem;
   };
 

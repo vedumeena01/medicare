@@ -77,6 +77,8 @@ async function runTestSuite() {
     'src/app/loading.tsx',
     'src/components/FeedbackModal.tsx',
     'src/lib/analytics.ts',
+    'src/lib/offlineSync.ts',
+    'src/components/NetworkStatusIndicator.tsx',
   ];
 
   for (const file of requiredFiles) {
@@ -324,6 +326,46 @@ async function runTestSuite() {
 
   const updatedNavbar = fs.readFileSync(path.join(rootDir, 'src', 'components', 'Navbar.tsx'), 'utf-8');
   assert(updatedNavbar.includes('FeedbackModal'), 'Navbar mounts FeedbackModal');
+
+  // ---------------------------------------------------------
+  // TEST SUITE 10: IndexedDB Offline Sync Queue & WCAG 2.1 AA Accessibility
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 10: IndexedDB Offline Sync Queue & WCAG 2.1 AA Accessibility');
+
+  const offlineSyncContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'offlineSync.ts'), 'utf-8');
+  assert(offlineSyncContent.includes('medicare_offline_db'), 'offlineSync creates IndexedDB database medicare_offline_db');
+  assert(offlineSyncContent.includes('sync_queue'), 'offlineSync manages sync_queue object store');
+  assert(offlineSyncContent.includes('enqueueSyncAction'), 'offlineSync exports enqueueSyncAction');
+  assert(offlineSyncContent.includes('processSyncQueue'), 'offlineSync exports processSyncQueue');
+  assert(offlineSyncContent.includes('subscribeSyncQueue'), 'offlineSync exports subscribeSyncQueue pub/sub');
+  assert(offlineSyncContent.includes('isOnline'), 'offlineSync exports isOnline detection');
+
+  const appCtx = fs.readFileSync(path.join(rootDir, 'src', 'context', 'AppContext.tsx'), 'utf-8');
+  assert(appCtx.includes('enqueueSyncAction'), 'AppContext enqueues offline mutations');
+  assert(appCtx.includes('UPDATE_MEDICINE_STATUS'), 'AppContext queues UPDATE_MEDICINE_STATUS offline actions');
+
+  const networkStatusContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'NetworkStatusIndicator.tsx'), 'utf-8');
+  assert(networkStatusContent.includes('subscribeSyncQueue'), 'NetworkStatusIndicator subscribes to IndexedDB sync queue');
+  assert(networkStatusContent.includes('role="status"'), 'NetworkStatusIndicator uses role="status"');
+  assert(networkStatusContent.includes('aria-live="polite"'), 'NetworkStatusIndicator uses aria-live="polite"');
+
+  const globalsCss = fs.readFileSync(path.join(rootDir, 'src', 'app', 'globals.css'), 'utf-8');
+  assert(globalsCss.includes(':focus-visible'), 'globals.css defines WCAG visible focus indicators');
+  assert(globalsCss.includes('.skip-to-content'), 'globals.css defines bypass skip-to-content styling');
+  assert(globalsCss.includes('prefers-reduced-motion'), 'globals.css respects prefers-reduced-motion preference');
+
+  const layoutContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'layout.tsx'), 'utf-8');
+  assert(layoutContent.includes('href="#main-content"') && layoutContent.includes('skip-to-content'), 'Root layout mounts skip-to-main-content bypass link');
+
+  const searchModalContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'GlobalSearchModal.tsx'), 'utf-8');
+  assert(searchModalContent.includes('role="dialog"') && searchModalContent.includes('aria-modal="true"'), 'GlobalSearchModal implements accessible dialog semantics');
+
+  const reminderModalContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'ReminderModal.tsx'), 'utf-8');
+  assert(reminderModalContent.includes('role="alertdialog"') && reminderModalContent.includes('aria-modal="true"'), 'ReminderModal implements accessible alertdialog semantics');
+
+  const feedbackModalContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'FeedbackModal.tsx'), 'utf-8');
+  assert(feedbackModalContent.includes('role="dialog"') && feedbackModalContent.includes('enqueueSyncAction'), 'FeedbackModal provides accessible dialog and queues offline feedback');
+
 
   // ---------------------------------------------------------
   // Summary & Final Exit

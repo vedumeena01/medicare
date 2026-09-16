@@ -62,7 +62,7 @@ export default function DashboardPage() {
         <Sidebar />
 
         {/* Main Dashboard Content Area */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 pb-24 lg:pb-12 overflow-x-hidden">
+        <main id="main-content" tabIndex={-1} className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 pb-24 lg:pb-12 overflow-x-hidden focus:outline-none">
           {/* Active Caregiver Mode Banner */}
           {!activeProfile.isSelf && (
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md animate-in fade-in duration-200">
