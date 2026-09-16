@@ -79,6 +79,7 @@ async function runTestSuite() {
     'src/lib/analytics.ts',
     'src/lib/offlineSync.ts',
     'src/components/NetworkStatusIndicator.tsx',
+    'src/lib/imageOptimization.ts',
   ];
 
   for (const file of requiredFiles) {
@@ -365,6 +366,28 @@ async function runTestSuite() {
 
   const feedbackModalContent = fs.readFileSync(path.join(rootDir, 'src', 'components', 'FeedbackModal.tsx'), 'utf-8');
   assert(feedbackModalContent.includes('role="dialog"') && feedbackModalContent.includes('enqueueSyncAction'), 'FeedbackModal provides accessible dialog and queues offline feedback');
+
+  // ---------------------------------------------------------
+  // TEST SUITE 11: Edge Performance, Multi-Tier Caching & Asset Compression
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 11: Edge Performance, Multi-Tier Caching & Asset Compression');
+
+  assert(swContent.includes('STATIC_CACHE') && swContent.includes('API_CACHE'), 'ServiceWorker defines multi-tier STATIC and API cache stores');
+  assert(swContent.includes('trimCache'), 'ServiceWorker implements trimCache LRU eviction mechanism');
+  assert(swContent.includes('isReadApi') && swContent.includes('isStaticAsset'), 'ServiceWorker implements SWR and Cache-First request routers');
+
+  const nextConfigContent = fs.readFileSync(path.join(rootDir, 'next.config.ts'), 'utf-8');
+  assert(nextConfigContent.includes('_next/static') && nextConfigContent.includes('max-age=31536000'), 'next.config.ts configures immutable cache headers for static chunks');
+  assert(nextConfigContent.includes('X-Content-Type-Options') && nextConfigContent.includes('nosniff'), 'next.config.ts enforces security headers');
+  assert(nextConfigContent.includes('compress: true'), 'next.config.ts enables gzip/brotli asset compression');
+
+  const imgOptContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'imageOptimization.ts'), 'utf-8');
+  assert(imgOptContent.includes('compressImageBase64'), 'imageOptimization.ts exports compressImageBase64');
+  assert(imgOptContent.includes('compressImageFile'), 'imageOptimization.ts exports compressImageFile');
+  assert(imgOptContent.includes('isImageMimeType'), 'imageOptimization.ts exports isImageMimeType');
+
+  const analyzeContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'analyze', 'page.tsx'), 'utf-8');
+  assert(analyzeContent.includes('compressImageBase64'), 'Analyze page compresses uploaded medical reports before processing');
 
 
   // ---------------------------------------------------------

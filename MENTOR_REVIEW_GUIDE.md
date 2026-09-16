@@ -31,8 +31,9 @@ Diagnostic lab reports and physician prescriptions contain vital health informat
 | **5. Drug-Drug Interactions** | Screen active prescriptions & allergies | `http://localhost:3000/medicines/interactions` | Automatic allergy cross-checking (e.g. Penicillin conflict) and food timing rules. |
 | **6. AI Report Extraction** | Test OCR & analysis pipeline | `http://localhost:3000/analyze` | 4 sample report cards (CBC, HbA1c, Thyroid, Rx). Click **"Analyze"** to observe 5-step animated scanning engine. |
 | **7. Bilingual Summary** | View report breakdown in EN / HI | `http://localhost:3000/reports/rep-cbc-june-2026` | Low Hb (10.8) and High Sugar (140) flagged in red; toggle English &lt;&gt; Hindi navbar icon to view full translation. |
-| **8. Automated Quality Suite** | Run single-command health check | Terminal: `npm test` or double-click `scripts/verify.bat` | **143/143 automated assertions passing 100%** across schema, clinical math, localization, IndexedDB sync, and WCAG AA. |
+| **8. Automated Quality Suite** | Run single-command health check | Terminal: `npm test` or double-click `scripts/verify.bat` | **154/154 automated assertions passing 100%** across schema, clinical math, localization, IndexedDB sync, WCAG AA, and Edge Caching. |
 | **9. Offline Mode & Sync Queue** | Test network disconnect & replay | Toggle network offline in DevTools or turn off Wi-Fi | Local IndexedDB queue captures dose intake & feedback; auto-synchronizes on reconnect. |
+| **10. Multi-Tier Edge Caching** | Inspect Network tab & Service Worker | DevTools &rarr; Application &rarr; Cache Storage | Stale-While-Revalidate (SWR) for read APIs, Cache-First for static assets, and pre-cached ICE triage. |
 
 ---
 
@@ -41,7 +42,8 @@ Diagnostic lab reports and physician prescriptions contain vital health informat
 ### 1. Frontend & Routing
 - **Framework**: Next.js 16.3.4 (App Router with Turbopack, dynamic server & client components).
 - **Type Safety**: 100% strict TypeScript (`tsconfig.json`) — **0 build errors across all application routes**.
-- **Automated Verification**: `npm test` runs 143 assertions across file integrity, local JSON DB, drug conflict heuristics, bilingual token parity, IndexedDB sync queue, and WCAG AA rules.
+- **Automated Verification**: `npm test` runs 154 assertions across file integrity, local JSON DB, drug conflict heuristics, bilingual token parity, IndexedDB sync queue, WCAG AA, and Edge Caching rules.
+- **Edge Performance & Multi-Tier Caching**: Service Worker v2 with SWR read API caching, immutable asset headers (`max-age=31536000`), security headers, and client-side canvas image compression.
 - **Offline Resilience**: IndexedDB storage (`medicare_offline_db`) with fallback to `localStorage` and real-time subscription bus (`NetworkStatusIndicator`).
 - **WCAG 2.1 AA Accessibility**: Bypass skip links (`.skip-to-content`), high-contrast focus rings (`:focus-visible`), reduced-motion compatibility, and ARIA dialog semantics.
 

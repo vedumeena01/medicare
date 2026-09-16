@@ -25,6 +25,7 @@ import CameraCaptureModal from '@/components/CameraCaptureModal';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { ReportType, Language } from '@/types';
+import { compressImageBase64, isImageMimeType } from '@/lib/imageOptimization';
 
 interface SamplePreset {
   id: string;
@@ -237,24 +238,36 @@ function AnalyzeContent() {
     const f = e.target.files?.[0];
     if (f) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setFile({
-          name: f.name,
-          size: `${(f.size / (1024 * 1024)).toFixed(1)} MB`,
-          mimeType: f.type || 'application/pdf',
-          base64: reader.result as string,
-        });
+      reader.onloadend = async () => {
+        const rawBase64 = reader.result as string;
+        if (isImageMimeType(f.type || f.name)) {
+          const comp = await compressImageBase64(rawBase64, 1280, 1280, 0.82);
+          setFile({
+            name: f.name,
+            size: `${(comp.compressedBytes / (1024 * 1024)).toFixed(2)} MB (${comp.sizeReductionPercent}% optimized)`,
+            mimeType: f.type || 'image/jpeg',
+            base64: comp.base64,
+          });
+        } else {
+          setFile({
+            name: f.name,
+            size: `${(f.size / (1024 * 1024)).toFixed(1)} MB`,
+            mimeType: f.type || 'application/pdf',
+            base64: rawBase64,
+          });
+        }
       };
       reader.readAsDataURL(f);
     }
   };
 
-  const handleCameraCapture = (base64Data: string, fileName: string) => {
+  const handleCameraCapture = async (base64Data: string, fileName: string) => {
+    const comp = await compressImageBase64(base64Data, 1280, 1280, 0.82);
     setFile({
       name: fileName,
-      size: '1.2 MB',
+      size: `${(comp.compressedBytes / (1024 * 1024)).toFixed(2)} MB (optimized)`,
       mimeType: 'image/jpeg',
-      base64: base64Data,
+      base64: comp.base64,
     });
   };
 
