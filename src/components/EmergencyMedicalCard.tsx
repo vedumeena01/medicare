@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ShieldAlert,
@@ -19,9 +19,11 @@ import {
   Download,
   Smartphone,
   Zap,
+  Fingerprint,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { isPasskeyRegistered, verifyPasskey } from '@/lib/webauthn';
 
 interface EmergencyMedicalCardProps {
   standalone?: boolean;
@@ -57,6 +59,20 @@ export default function EmergencyMedicalCard({ standalone = false }: EmergencyMe
     name: 'Ramesh (Father)',
     phone: '+91 98765 11111',
     relation: 'Father',
+  };
+
+  const [isBiometricUnlocked, setIsBiometricUnlocked] = useState(false);
+  const [hasPasskey, setHasPasskey] = useState(false);
+
+  useEffect(() => {
+    setHasPasskey(isPasskeyRegistered());
+  }, []);
+
+  const handleBiometricUnlock = async () => {
+    const res = await verifyPasskey();
+    if (res.success) {
+      setIsBiometricUnlocked(true);
+    }
   };
 
   const handlePrint = () => {
@@ -240,6 +256,34 @@ export default function EmergencyMedicalCard({ standalone = false }: EmergencyMe
             </span>
           </div>
         </div>
+
+        {/* Passkey Biometric Security Banner */}
+        {hasPasskey && (
+          <div className="bg-slate-900 text-white px-6 py-2.5 flex items-center justify-between gap-3 text-xs border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <Fingerprint className="w-4 h-4 text-blue-400 shrink-0" />
+              <span className="text-[11px] sm:text-xs">
+                {isBiometricUnlocked
+                  ? 'Biometric Verification Confirmed (Touch ID / Face ID / Windows Hello)'
+                  : 'Passkey Protected Vault — Verify biometrics for elevated triage access'}
+              </span>
+            </div>
+            {!isBiometricUnlocked ? (
+              <button
+                type="button"
+                onClick={handleBiometricUnlock}
+                className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition shadow-xs flex items-center gap-1 shrink-0"
+              >
+                <span>Verify Biometrics</span>
+              </button>
+            ) : (
+              <span className="text-emerald-400 font-bold text-[11px] flex items-center gap-1 shrink-0">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Unlocked</span>
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="p-6 sm:p-8 space-y-6">
           {/* Critical Grid: Next-of-Kin Contact & Known Allergies */}

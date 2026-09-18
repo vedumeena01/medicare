@@ -80,6 +80,8 @@ async function runTestSuite() {
     'src/lib/offlineSync.ts',
     'src/components/NetworkStatusIndicator.tsx',
     'src/lib/imageOptimization.ts',
+    'src/lib/webauthn.ts',
+    'src/lib/smartFhirAuth.ts',
   ];
 
   for (const file of requiredFiles) {
@@ -388,6 +390,32 @@ async function runTestSuite() {
 
   const analyzeContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'analyze', 'page.tsx'), 'utf-8');
   assert(analyzeContent.includes('compressImageBase64'), 'Analyze page compresses uploaded medical reports before processing');
+
+  // ---------------------------------------------------------
+  // TEST SUITE 12: WebAuthn Biometrics, Passkeys & SMART-on-FHIR Gateway
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 12: WebAuthn Biometrics, Passkeys & SMART-on-FHIR Gateway');
+
+  const webauthnContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'webauthn.ts'), 'utf-8');
+  assert(webauthnContent.includes('isWebAuthnSupported'), 'webauthn.ts exports isWebAuthnSupported');
+  assert(webauthnContent.includes('registerPasskey'), 'webauthn.ts exports registerPasskey');
+  assert(webauthnContent.includes('verifyPasskey'), 'webauthn.ts exports verifyPasskey');
+  assert(webauthnContent.includes('isPasskeyRegistered'), 'webauthn.ts exports isPasskeyRegistered');
+  assert(webauthnContent.includes('clearPasskeys'), 'webauthn.ts exports clearPasskeys');
+
+  const smartFhirContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'smartFhirAuth.ts'), 'utf-8');
+  assert(smartFhirContent.includes('generateSmartLaunchUrl'), 'smartFhirAuth.ts exports generateSmartLaunchUrl');
+  assert(smartFhirContent.includes('exchangeSmartAuthCode'), 'smartFhirAuth.ts exports exchangeSmartAuthCode');
+  assert(smartFhirContent.includes('getStoredSmartSession'), 'smartFhirAuth.ts exports getStoredSmartSession');
+  assert(smartFhirContent.includes('isSmartConnected'), 'smartFhirAuth.ts exports isSmartConnected');
+
+  const settingsContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'settings', 'page.tsx'), 'utf-8');
+  assert(settingsContent.includes('handleRegisterPasskey'), 'Settings page mounts passkey registration');
+  assert(settingsContent.includes('handleVerifyPasskey'), 'Settings page mounts biometric verification test');
+  assert(settingsContent.includes('handleInitiateSmartLaunch'), 'Settings page mounts SMART-on-FHIR connector');
+
+  const emergencyCardUpdated = fs.readFileSync(path.join(rootDir, 'src', 'components', 'EmergencyMedicalCard.tsx'), 'utf-8');
+  assert(emergencyCardUpdated.includes('verifyPasskey'), 'EmergencyMedicalCard integrates biometric passkey unlock');
 
 
   // ---------------------------------------------------------
