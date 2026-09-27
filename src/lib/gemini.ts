@@ -24,14 +24,16 @@ export function getGeminiApiKey(): string {
     } catch {}
   }
 
-  // Only return if it matches standard Google Generative AI key format (AIza...)
-  if (key && key.startsWith('AIza')) {
+  // Support standard AIza... format, new AQ... auth key format, or valid length keys
+  if (key && (key.startsWith('AIza') || key.startsWith('AQ.') || key.length >= 20)) {
     return key;
   }
   return '';
 }
 
 export const GEMINI_CANDIDATE_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-3.1-pro-preview',
   'gemini-3.6-flash',
   'gemini-flash-latest',
   'gemini-2.5-pro',
@@ -59,6 +61,9 @@ export async function generateWithFallbackModel(
         msg.includes('404') ||
         msg.includes('not found') ||
         msg.includes('no longer available') ||
+        msg.includes('429') ||
+        msg.includes('quota') ||
+        msg.includes('RESOURCE_EXHAUSTED') ||
         msg.includes('503') ||
         msg.includes('high demand')
       ) {
@@ -513,6 +518,71 @@ ${message}
         'How much water should I drink during a fever?',
         'When should I see a general physician for fever?',
         'Can paracetamol be taken on an empty stomach?',
+      ],
+    };
+  }
+
+  if (lower.includes('cbc') || lower.includes('hemoglobin') || lower.includes('हीमोग्लोबिन') || lower.includes('blood report') || lower.includes('रक्त जांच')) {
+    return {
+      reply: `**Complete Blood Count (CBC) & Hemoglobin Overview:**\n\n• **Hemoglobin (Hb):** Normal adult range is typically 13.5–17.5 g/dL (men) and 12.0–15.5 g/dL (women). Low levels indicate anemia, while high levels can stem from dehydration or smoking.\n• **White Blood Cells (WBC):** Normal range is 4,500–11,000 cells/mcL. An elevated count often points toward infection or inflammation.\n• **Platelets:** Essential for blood clotting; normal count ranges from 150,000 to 450,000 /mcL.\n\n*Would you like to review your uploaded reports on the Reports page or discuss dietary sources for iron and B12?*`,
+      replyHi: `**कम्प्लीट ब्लड काउंट (CBC) और हीमोग्लोबिन विश्लेषण:**\n\n• **हीमोग्लोबिन (Hb):** पुरुषों में सामान्य स्तर 13.5–17.5 g/dL और महिलाओं में 12.0–15.5 g/dL होता है। कम स्तर एनीमिया (खून की कमी) दर्शाता है।\n• **श्वेत रक्त कोशिकाएं (WBC):** सामान्य मान 4,500–11,000 /mcL है। बढ़ा हुआ मान संक्रमण या सूजन का संकेत हो सकता है।\n• **प्लेटलेट्स:** सामान्य संख्या 1.5 से 4.5 लाख /mcL होती है, जो रक्त का थक्का बनाने में आवश्यक है।\n\n*क्या आप अपनी अपलोड की गई रिपोर्ट देखना चाहते हैं या हीमोग्लोबिन बढ़ाने वाले आहार के बारे में जानना चाहते हैं?*`,
+      isLiveAI: false,
+      suggestedQuestions: [
+        'What are the best foods to boost hemoglobin naturally?',
+        'What symptoms indicate low platelet count?',
+        'How often should a healthy adult take a CBC test?',
+      ],
+    };
+  }
+
+  if (lower.includes('food') || lower.includes('diet') || lower.includes('boost') || lower.includes('iron') || lower.includes('आहार') || lower.includes('पोषण')) {
+    return {
+      reply: `**Nutritional Strategies to Boost Hemoglobin & Vitality:**\n\n• **Iron-Rich Foods:** Incorporate dark green leafy vegetables (spinach, fenugreek), beetroot, pomegranate, lentils, chickpeas, and jaggery (gud).\n• **Vitamin C Synergy:** Vitamin C dramatically enhances non-heme iron absorption. Squeeze fresh lemon over salads or consume oranges, amla (Indian gooseberry), and tomatoes with meals.\n• **Inhibitor Caution:** Avoid drinking tea, coffee, or calcium supplements within 1 hour before or after iron-rich meals, as tannins and calcium hinder iron uptake.\n• **Hydration:** Aim for 2.5–3 liters of water daily to support circulation and energy levels.`,
+      replyHi: `**हीमोग्लोबिन और ऊर्जा बढ़ाने के लिए पोषक आहार:**\n\n• **आयरन युक्त आहार:** पालक, मेथी, चुकंदर (Beetroot), अनार, गुड़, खजूर और हरी दालों का नियमित सेवन करें।\n• **विटामिन C का साथ:** आयरन को शरीर में अवशोषित करने के लिए भोजन के साथ नींबू, आंवला, संतरा या टमाटर जरूर लें।\n• **सावधानी:** भोजन के तुरंत बाद चाय या कॉफी न पिएं, क्योंकि ये आयरन के अवशोषण को बाधित करते हैं।\n• **पर्याप्त पानी:** प्रतिदिन 2.5 से 3 लीटर पानी पिएं।`,
+      isLiveAI: false,
+      suggestedQuestions: [
+        'Can amla juice help increase hemoglobin fast?',
+        'Are iron supplements better taken before or after meals?',
+        'Which fruits are richest in Vitamin C and antioxidants?',
+      ],
+    };
+  }
+
+  if (lower.includes('appointment') || lower.includes('book') || lower.includes('doctor') || lower.includes('डॉक्टर') || lower.includes('परामर्श')) {
+    return {
+      reply: `**Booking a Doctor Consultation on Medicare AI:**\n\n1. Navigate to the **Specialist Directory** via the top navigation or [Appointments](/appointments).\n2. Select your required specialty: **Cardiologist**, **Endocrinologist**, **General Physician**, or **Pulmonologist**.\n3. Choose your preferred mode: **In-Person Clinic Visit** or **Instant Video Tele-Consultation**.\n4. Pick a convenient date and time slot, then confirm your appointment with 1 click!\n\n*Tip: You can attach your AI-simplified lab reports directly so your doctor has full clinical context.*`,
+      replyHi: `**Medicare AI पर डॉक्टर परामर्श बुक करने का तरीका:**\n\n1. मुख्य मेनू से **[अपॉइंटमेंट्स (/appointments)](/appointments)** पेज पर जाएं।\n2. अपनी आवश्यकतानुसार विशेषज्ञ चुनें: **कार्डियोलॉजिस्ट (हृदय रोग)**, **एंडोक्रिनोलॉजिस्ट (शुगर/थायराइड)**, या **जनरल फिजिशियन**।\n3. परामर्श का प्रकार चुनें: **क्लिनिक विजिट** या **वीडियो टेली-कंसल्टेशन**।\n4. अपनी सुविधानुसार समय चुनें और 1-क्लिक में पुष्टि करें!`,
+      isLiveAI: false,
+      suggestedQuestions: [
+        'How to prepare questions before meeting my physician?',
+        'Can I share my PDF reports with the specialist online?',
+        'What are the consultation hours for general physicians?',
+      ],
+    };
+  }
+
+  if (lower.includes('medicine') || lower.includes('schedule') || lower.includes('dose') || lower.includes('दवा') || lower.includes('खुराक')) {
+    return {
+      reply: `**Medication Schedule & Adherence Guidance:**\n\n• **Daily Tracking:** Review your complete active medication timetable on the [Medicines Schedule](/schedules) page.\n• **Food Interactions:** Always check whether your medicines should be taken before food (e.g. Pantoprazole) or after food (e.g. Metformin, Painkillers) to avoid gastric irritation.\n• **Automated Alerts:** Medicare AI supports browser audio alarms and WhatsApp/SMS reminder dispatch for caregivers to ensure zero missed doses.\n• **Safety:** Before combining over-the-counter pain medications, check our [Drug Interaction Screener](/medicines/interactions).`,
+      replyHi: `**दवा समय-सारणी और खुराक नियम:**\n\n• **दैनिक ट्रैकिंग:** अपनी सक्रिय दवाइयों का समय [दवा शेड्यूल (/schedules)](/schedules) पेज पर देख सकते हैं।\n• **भोजन के साथ नियम:** गैस की दवाएं (जैसे Pantoprazole) खाली पेट और एंटीबायोटिक/दर्द निवारक हमेशा भोजन के बाद लें।\n• **रिमाइंडर अलर्ट:** समय पर दवा लेने के लिए व्हाट्सएप और ब्राउज़र ऑडियो अलार्म चालू रखें।\n• **दवा टकराव:** दो दवाएं साथ लेने से पहले [ड्रग इंटरेक्शन चेकर](/medicines/interactions) से जांच करें।`,
+      isLiveAI: false,
+      suggestedQuestions: [
+        'What should I do if I miss a scheduled medicine dose?',
+        'Is it safe to take Metformin and Pantoprazole together?',
+        'How to scan a medicine packaging with the AR Camera?',
+      ],
+    };
+  }
+
+  if (lower.includes('bp') || lower.includes('blood pressure') || lower.includes('रक्तचाप') || lower.includes('हाइपरटेंशन')) {
+    return {
+      reply: `**Blood Pressure Guidelines:**\n\n• **Normal Range:** Systolic < 120 mmHg and Diastolic < 80 mmHg.\n• **Elevated / Stage 1:** 120–129/<80 is elevated; 130–139/80–89 indicates Stage 1 Hypertension.\n• **Hypertensive Urgency:** Readings exceeding 180/120 mmHg require prompt medical care, especially if accompanied by headache, blurry vision, or chest tightness.\n• **Lifestyle Control:** Reduce sodium intake (<2,000 mg/day), engage in aerobic exercise, manage stress, and limit caffeine/alcohol.`,
+      replyHi: `**रक्तचाप (Blood Pressure) की जानकारी:**\n\n• **सामान्य स्तर:** 120/80 mmHg या उससे कम।\n• **उच्च रक्तचाप (हाइपरटेंशन):** 130–139/80–89 स्टेज-1 और 140/90 से ऊपर स्टेज-2 माना जाता है।\n• **सावधानी:** यदि बीपी 180/120 से ऊपर हो और सिरदर्द या चक्कर आए, तो तुरंत डॉक्टर से संपर्क करें।\n• **सुझाव:** नमक की मात्रा कम करें, रोजाना 30 मिनट टहलें और तनाव कम करें।`,
+      isLiveAI: false,
+      suggestedQuestions: [
+        'How many times a day should blood pressure be measured?',
+        'Does reducing table salt immediately lower blood pressure?',
+        'What foods help maintain healthy blood pressure levels?',
       ],
     };
   }

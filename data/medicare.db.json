@@ -1,6 +1,6 @@
 {
   "user": {
-    "id": "usr-google-1789537881270",
+    "id": "usr-google-1790517025873",
     "name": "Vedprakash",
     "email": "vedprakash@example.com",
     "mobile": "+91 98765 00000",
@@ -19,6 +19,283 @@
     "avatarUrl": "https://api.dicebear.com/7.x/initials/svg?seed=Vedprakash"
   },
   "reports": [
+    {
+      "id": "rep-1790517261211",
+      "userId": "user-1",
+      "fileName": "Sample_CBC_Blood_Test_Report.pdf",
+      "reportType": "Blood Test",
+      "uploadedAt": "27 Sept 2026",
+      "status": "Completed",
+      "language": "en",
+      "overallScore": 84,
+      "summary": "Your Complete Blood Count (CBC) and Metabolic Panel indicate generally good physiological stability, though three parameters fall outside standard reference boundaries. Your Hemoglobin is slightly below reference range, suggesting mild anemia. Blood Sugar (Fasting) and LDL Cholesterol are moderately elevated and warrant lifestyle adjustments and consultation with your primary physician.",
+      "summaryHi": "आपकी कम्पलीट ब्लड काउंट (CBC) और मेटाबॉलिक रिपोर्ट दर्शाती है कि आपकी समग्र सेहत ठीक है, परंतु तीन जांचों के परिणाम सामान्य सीमा से बाहर हैं। आपका हीमोग्लोबिन सामान्य से कुछ कम है जो हल्के एनीमिया का संकेत हो सकता है। फास्टिंग ब्लड शुगर और एलडीएल कोलेस्ट्रॉल बढ़े हुए हैं, जिनके लिए जीवनशैली में सुधार और डॉक्टर से परामर्श की आवश्यकता है।",
+      "findings": [
+        {
+          "test": "Hemoglobin (Hb)",
+          "testHi": "हीमोग्लोबिन (Hb)",
+          "value": "10.8",
+          "unit": "g/dL",
+          "referenceRange": "12.0 - 16.0",
+          "status": "low",
+          "explanation": "Hemoglobin is the protein in your red blood cells responsible for carrying oxygen throughout your body. Your value is below the laboratory reference range.",
+          "explanationHi": "हीमोग्लोबिन लाल रक्त कोशिकाओं में पाया जाने वाला प्रोटीन है जो पूरे शरीर में ऑक्सीजन पहुंचाता है। आपका स्तर सामान्य सीमा (12-16) से कम है।",
+          "possibleMeaning": "This may contribute to mild fatigue, lower stamina, or mild pale skin. Often associated with dietary iron or vitamin deficiency.",
+          "possibleMeaningHi": "इसके कारण थकान, कमजोरी या ऊर्जा में कमी महसूस हो सकती है। यह आमतौर पर भोजन में आयरन या विटामिन की कमी से संबंधित हो सकता है।",
+          "confidence": 0.99
+        },
+        {
+          "test": "Fasting Blood Sugar (Glucose)",
+          "testHi": "फास्टिंग ब्लड शुगर (ग्लूकोज)",
+          "value": "140",
+          "unit": "mg/dL",
+          "referenceRange": "70 - 110",
+          "status": "high",
+          "explanation": "Measures circulating glucose levels in your bloodstream after an 8-hour fast. Your recorded level is higher than typical fasting reference boundaries.",
+          "explanationHi": "8 घंटे के उपवास के बाद रक्त में शुगर के स्तर को मापता है। आपका स्तर सामान्य संदर्भ सीमा (70-110) से अधिक है।",
+          "possibleMeaning": "Elevated fasting glucose can indicate impaired glucose tolerance or early insulin resistance. A physician may recommend an HbA1c test.",
+          "possibleMeaningHi": "यह इंसुलिन प्रतिरोध या प्रीडायबिटीज का संकेत हो सकता है। डॉक्टर आपको 3 महीने वाली HbA1c जांच कराने की सलाह दे सकते हैं।",
+          "confidence": 0.98
+        },
+        {
+          "test": "Total Cholesterol",
+          "testHi": "टोटल कोलेस्ट्रॉल",
+          "value": "210",
+          "unit": "mg/dL",
+          "referenceRange": "< 200",
+          "status": "high",
+          "explanation": "Total amount of cholesterol fats found in your bloodstream. Your reading is slightly above the desirable upper threshold of 200 mg/dL.",
+          "explanationHi": "रक्त में वसा (फैट) की कुल मात्रा। आपका मान अनुशंसित 200 mg/dL की सीमा से थोड़ा अधिक है।",
+          "possibleMeaning": "Borderline high cholesterol can be influenced by diet, physical activity, or genetic predispositions. Requires heart-healthy diet changes.",
+          "possibleMeaningHi": "यह आहार, शारीरिक निष्क्रियता या अनुवांशिकी से प्रभावित हो सकता है। हृदय-स्वस्थ खानपान अपनाने की आवश्यकता है।",
+          "confidence": 0.97
+        },
+        {
+          "test": "LDL Cholesterol (Bad Fat)",
+          "testHi": "एलडीएल कोलेस्ट्रॉल (खराब वसा)",
+          "value": "170",
+          "unit": "mg/dL",
+          "referenceRange": "< 100",
+          "status": "high",
+          "explanation": "Low-density lipoprotein cholesterol can accumulate in blood vessels over time. Your value is above optimal cardiovascular targets.",
+          "explanationHi": "यह धमनियों में जमा हो सकने वाला खराब कोलेस्ट्रॉल है। आपका मान सामान्य 100 से अधिक है।",
+          "possibleMeaning": "Consistent elevation increases future cardiovascular strain. Modifying dietary saturated fats and regular brisk walking are typically advised.",
+          "possibleMeaningHi": "लंबे समय तक अधिक रहने पर यह दिल पर दबाव बढ़ा सकता है। तली-भुनी चीजों से परहेज और नियमित सैर की सलाह दी जाती है।",
+          "confidence": 0.96
+        },
+        {
+          "test": "HDL Cholesterol (Good Fat)",
+          "testHi": "एचडीएल कोलेस्ट्रॉल (अच्छा वसा)",
+          "value": "40",
+          "unit": "mg/dL",
+          "referenceRange": "> 40",
+          "status": "low",
+          "explanation": "High-density lipoprotein protects blood vessels by clearing excess fats. Your level is borderline on the protective minimum mark.",
+          "explanationHi": "यह दिल की रक्षा करने वाला सुरक्षात्मक कोलेस्ट्रॉल है। आपका स्तर 40 के निचले स्तर पर है।",
+          "possibleMeaning": "Higher HDL levels are protective. Aerobic exercise, nuts, and healthy seeds help boost HDL.",
+          "possibleMeaningHi": "नियमित व्यायाम, बादाम-अखरोट और स्वस्थ तेलों के सेवन से इसे बढ़ाया जा सकता है।",
+          "confidence": 0.95
+        }
+      ],
+      "normalValues": [
+        {
+          "test": "Red Blood Cell (RBC) Count",
+          "testHi": "लाल रक्त कोशिका (RBC) गणना",
+          "value": "4.2",
+          "unit": "mill/mcL",
+          "referenceRange": "4.0 - 5.5",
+          "status": "normal"
+        },
+        {
+          "test": "White Blood Cell (WBC) Count",
+          "testHi": "श्वेत रक्त कोशिका (WBC) गणना",
+          "value": "8,500",
+          "unit": "/mcL",
+          "referenceRange": "4,000 - 11,000",
+          "status": "normal"
+        },
+        {
+          "test": "Platelet Count",
+          "testHi": "प्लेटलेट्स काउंट",
+          "value": "2.5",
+          "unit": "Lakhs/mcL",
+          "referenceRange": "1.5 - 4.0",
+          "status": "normal"
+        },
+        {
+          "test": "Triglycerides",
+          "testHi": "ट्राइग्लिसराइड्स",
+          "value": "135",
+          "unit": "mg/dL",
+          "referenceRange": "< 150",
+          "status": "normal"
+        },
+        {
+          "test": "Blood Urea Nitrogen (BUN)",
+          "testHi": "ब्लड यूरिया नाइट्रोजन (BUN)",
+          "value": "14",
+          "unit": "mg/dL",
+          "referenceRange": "7 - 20",
+          "status": "normal"
+        },
+        {
+          "test": "Serum Creatinine",
+          "testHi": "सीरम क्रिएटिनिन",
+          "value": "0.9",
+          "unit": "mg/dL",
+          "referenceRange": "0.7 - 1.3",
+          "status": "normal"
+        }
+      ],
+      "medicalTerms": [
+        {
+          "term": "Hemoglobin",
+          "termHi": "हीमोग्लोबिन",
+          "simpleMeaning": "An iron-rich protein in red blood cells that transports vital oxygen from your lungs to every muscle and organ in your body.",
+          "simpleMeaningHi": "लाल रक्त कोशिकाओं में मौजूद प्रोटीन जो फेफड़ों से पूरे शरीर में ऑक्सीजन ले जाने का काम करता है।",
+          "whyMeasured": "Tested to detect anemias, bleeding, bone marrow health, or nutrient deficiencies.",
+          "whyMeasuredHi": "खून की कमी (एनीमिया) और समग्र शारीरिक ऊर्जा की स्थिति जांचने के लिए मापा जाता है।"
+        },
+        {
+          "term": "LDL Cholesterol",
+          "termHi": "एलडीएल कोलेस्ट्रॉल",
+          "simpleMeaning": "Often nicknamed \"bad cholesterol\" because high amounts can stick to artery walls, narrowing passages over many years.",
+          "simpleMeaningHi": "इसे \"खराब कोलेस्ट्रॉल\" कहा जाता है क्योंकि अधिक होने पर यह धमनियों में जमा होने लगता है।",
+          "whyMeasured": "Used to gauge cardiovascular health risk and guide preventative nutrition.",
+          "whyMeasuredHi": "हृदय स्वास्थ्य और धमनियों की सुरक्षा का आकलन करने के लिए।"
+        },
+        {
+          "term": "Platelets",
+          "termHi": "प्लेटलेट्स",
+          "simpleMeaning": "Tiny blood cell fragments that rush to form clots whenever you experience a cut or minor injury.",
+          "simpleMeaningHi": "रक्त के छोटे कण जो चोट लगने पर खून का थक्का जमाकर खून बहने से रोकते हैं।",
+          "whyMeasured": "Ensures your blood can properly clot and rules out viral or bone marrow irregularities.",
+          "whyMeasuredHi": "यह सुनिश्चित करने के लिए कि खून सामान्य रूप से जमता है या नहीं।"
+        }
+      ],
+      "doctorQuestions": [
+        {
+          "id": "q1",
+          "question": "Should I repeat the Hemoglobin and Fasting Sugar test in 4 to 6 weeks?",
+          "questionHi": "क्या मुझे 4 से 6 सप्ताह में हीमोग्लोबिन और फास्टिंग शुगर की जांच दोबारा करानी चाहिए?"
+        },
+        {
+          "id": "q2",
+          "question": "Would you recommend an HbA1c test to assess my average 3-month blood sugar?",
+          "questionHi": "क्या पिछले 3 महीनों की औसत शुगर जानने के लिए HbA1c टेस्ट कराना उचित रहेगा?"
+        },
+        {
+          "id": "q3",
+          "question": "What specific dietary changes do you advise to lower LDL cholesterol naturally without immediately starting medication?",
+          "questionHi": "दवा के बिना प्राकृतिक रूप से एलडीएल कोलेस्ट्रॉल कम करने के लिए मुझे खानपान में क्या बदलाव करने चाहिए?"
+        },
+        {
+          "id": "q4",
+          "question": "Could my mild fatigue be directly attributed to the 10.8 g/dL hemoglobin level?",
+          "questionHi": "क्या मेरी हल्की थकान का सीधा संबंध 10.8 g/dL हीमोग्लोबिन स्तर से हो सकता है?"
+        }
+      ],
+      "suggestions": [
+        {
+          "category": "lifestyle",
+          "title": "Incorporate Iron-Rich Whole Foods",
+          "titleHi": "आयरन युक्त प्राकृतिक खाद्य पदार्थ खाएं",
+          "description": "Include spinach, beetroot, lentils, pomegranate, seeds, and vitamin C foods (lemons, amla) which enhance iron absorption.",
+          "descriptionHi": "पालक, चुकंदर, दालें, अनार और आंवला जैसे विटामिन सी युक्त आहार लें जो आयरन सोखने में मदद करते हैं।"
+        },
+        {
+          "category": "lifestyle",
+          "title": "Aim for 30 Minutes of Daily Aerobic Activity",
+          "titleHi": "प्रतिदिन 30 मिनट हल्की कसरत या तेज चाल करें",
+          "description": "Brisk walking or cycling improves cellular insulin sensitivity and helps boost HDL good cholesterol.",
+          "descriptionHi": "रोजाना 30 मिनट टहलना शुगर के स्तर को संतुलित रखने और अच्छे कोलेस्ट्रॉल को बढ़ाने में सहायक होता है।"
+        },
+        {
+          "category": "doctor",
+          "title": "Discuss Results with Healthcare Provider",
+          "titleHi": "डॉक्टर से रिपोर्ट पर विस्तार से चर्चा करें",
+          "description": "Schedule a routine consultation to contextualize these findings with your medical history and family predispositions.",
+          "descriptionHi": "अपने पारिवारिक इतिहास और लक्षणों के अनुसार उचित सलाह हेतु डॉक्टर से परामर्श अवश्य लें।"
+        },
+        {
+          "category": "testing",
+          "title": "Keep Historical Reports Organized for Comparison",
+          "titleHi": "पिछली रिपोर्ट्स को संभाल कर रखें",
+          "description": "Maintain this digital record so your physician can evaluate rate of change across checkups.",
+          "descriptionHi": "अगले चेकअप में डॉक्टर को दिखाने के लिए इस डिजिटल रिकॉर्ड को सुरक्षित रखें।"
+        }
+      ],
+      "riskAnalysis": [
+        {
+          "name": "Heart Health Risk",
+          "nameHi": "हृदय स्वास्थ्य जोखिम",
+          "riskPercentage": 72,
+          "riskLevel": "High Risk",
+          "riskLevelHi": "उच्च जोखिम",
+          "color": "#ef4444"
+        },
+        {
+          "name": "Diabetes Risk",
+          "nameHi": "डायबिटीज जोखिम",
+          "riskPercentage": 65,
+          "riskLevel": "Moderate Risk",
+          "riskLevelHi": "मध्यम जोखिम",
+          "color": "#f59e0b"
+        },
+        {
+          "name": "Kidney Health Risk",
+          "nameHi": "किडनी स्वास्थ्य जोखिम",
+          "riskPercentage": 20,
+          "riskLevel": "Low Risk",
+          "riskLevelHi": "कम जोखिम",
+          "color": "#10b981"
+        },
+        {
+          "name": "Liver Health Risk",
+          "nameHi": "लिवर स्वास्थ्य जोखिम",
+          "riskPercentage": 15,
+          "riskLevel": "Low Risk",
+          "riskLevelHi": "कम जोखिम",
+          "color": "#10b981"
+        }
+      ],
+      "comparison": {
+        "previousReportName": "Blood Test - May 2026",
+        "previousDate": "15 May 2026",
+        "currentReportName": "Blood Test - June 2026",
+        "currentDate": "20 June 2026",
+        "comparisons": [
+          {
+            "test": "Hemoglobin",
+            "oldValue": "11.4 g/dL",
+            "newValue": "10.8 g/dL",
+            "referenceRange": "12 - 16 g/dL",
+            "change": "declined",
+            "changeText": "Decreased by 0.6 g/dL. Discuss dietary iron with physician.",
+            "changeTextHi": "0.6 g/dL कम हुआ है। डॉक्टर से आहार पर चर्चा करें।"
+          },
+          {
+            "test": "Blood Sugar (F)",
+            "oldValue": "128 mg/dL",
+            "newValue": "140 mg/dL",
+            "referenceRange": "70 - 110 mg/dL",
+            "change": "declined",
+            "changeText": "Increased by 12 mg/dL. Requires tighter dietary carbohydrate tracking.",
+            "changeTextHi": "12 mg/dL की वृद्धि हुई। मीठे और कार्बोहाइड्रेट पर नियंत्रण रखें।"
+          },
+          {
+            "test": "Total Cholesterol",
+            "oldValue": "225 mg/dL",
+            "newValue": "210 mg/dL",
+            "referenceRange": "< 200 mg/dL",
+            "change": "improved",
+            "changeText": "Improved by 15 mg/dL compared to May report.",
+            "changeTextHi": "मई की तुलना में 15 mg/dL का अच्छा सुधार हुआ।"
+          }
+        ]
+      },
+      "confidenceThresholdMet": true
+    },
     {
       "id": "rep-cbc-june-2026",
       "userId": "user-1",
@@ -1152,5 +1429,5 @@
       "actionUrl": "/settings"
     }
   ],
-  "lastUpdated": "2026-09-16T05:54:42.931Z"
+  "lastUpdated": "2026-09-27T13:54:21.334Z"
 }
