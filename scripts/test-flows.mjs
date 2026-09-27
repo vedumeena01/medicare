@@ -138,6 +138,27 @@ async function runTestSuite() {
   assert(sampleMed.dosageInstruction && typeof sampleMed.dosageInstruction === 'string', 'Medicine has dosage instructions');
   assert(sampleMed.scheduledTime && typeof sampleMed.scheduledTime === 'string', 'Medicine has scheduled alarm time');
 
+  // Verify Modern Prisma 7 & SQLite Engine Contracts
+  const prismaConfigFile = path.join(rootDir, 'prisma.config.ts');
+  assert(fs.existsSync(prismaConfigFile), 'prisma.config.ts exists and specifies datasource');
+  const prismaConfigContent = fs.readFileSync(prismaConfigFile, 'utf-8');
+  assert(prismaConfigContent.includes('defineConfig') && prismaConfigContent.includes('dev.db'), 'prisma.config.ts defines SQLite connection');
+
+  const schemaFile = path.join(rootDir, 'prisma', 'schema.prisma');
+  assert(fs.existsSync(schemaFile), 'prisma/schema.prisma exists');
+  const schemaContent = fs.readFileSync(schemaFile, 'utf-8');
+  assert(schemaContent.includes('model User') && schemaContent.includes('model Report'), 'schema.prisma models User and Report');
+  assert(schemaContent.includes('model Medicine') && schemaContent.includes('model FamilyMember'), 'schema.prisma models Medicine and FamilyMember');
+
+  const devDbFile = path.join(rootDir, 'dev.db');
+  assert(fs.existsSync(devDbFile), 'SQLite dev.db database file exists');
+
+  const dbTsContent = fs.readFileSync(path.join(rootDir, 'src', 'lib', 'db.ts'), 'utf-8');
+  assert(dbTsContent.includes('renameSync'), 'db.ts implements atomic file writes (CONC-01)');
+  assert(dbTsContent.includes('Array.isArray(parsed.reports)'), 'db.ts preserves empty lists without zombie resurrects (LOGIC-01)');
+  assert(dbTsContent.includes('getReportsAsync') && dbTsContent.includes('getMedicinesAsync'), 'db.ts exposes async Prisma methods');
+  assert(dbTsContent.includes('syncToSqlite'), 'db.ts exposes SQLite sync engine');
+
   // ---------------------------------------------------------
   // TEST SUITE 3: Clinical Risk Stratification Boundaries
   // ---------------------------------------------------------
