@@ -21,7 +21,8 @@ function saveKeyToDisk(key: string) {
       config = {};
     }
   }
-  config.geminiApiKey = key.trim();
+  const sanitized = key.trim().replace(/[\r\n]/g, '');
+  config.geminiApiKey = sanitized;
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
 
   // Also sync to .env.local
@@ -31,9 +32,9 @@ function saveKeyToDisk(key: string) {
       envContent = fs.readFileSync(ENV_FILE, 'utf-8');
     }
     if (envContent.includes('GEMINI_API_KEY=')) {
-      envContent = envContent.replace(/GEMINI_API_KEY=.*/g, `GEMINI_API_KEY=${key.trim()}`);
+      envContent = envContent.replace(/GEMINI_API_KEY=.*/g, `GEMINI_API_KEY=${sanitized}`);
     } else {
-      envContent += `\nGEMINI_API_KEY=${key.trim()}\n`;
+      envContent += `\nGEMINI_API_KEY=${sanitized}\n`;
     }
     fs.writeFileSync(ENV_FILE, envContent, 'utf-8');
   } catch (err) {
@@ -41,7 +42,7 @@ function saveKeyToDisk(key: string) {
   }
 
   // Also set process.env
-  process.env.GEMINI_API_KEY = key.trim();
+  process.env.GEMINI_API_KEY = sanitized;
 }
 
 export async function GET() {
@@ -76,7 +77,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const cleanKey = apiKey.trim();
+    const cleanKey = apiKey.trim().replace(/[\r\n]/g, '');
+    if (!/^[A-Za-z0-9_.\-]+$/.test(cleanKey)) {
+      return NextResponse.json(
+        { error: 'Invalid characters in API key. API key must only contain alphanumeric characters, hyphens, underscores, or dots.' },
+        { status: 400 }
+      );
+    }
 
     // Verify key by running a fast ping test with available Gemini models
     let verifiedModel = '';

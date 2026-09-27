@@ -186,7 +186,7 @@ export async function registerPasskey(user: {
  */
 export async function verifyPasskey(
   credentialId?: string
-): Promise<{ success: boolean; credentialId?: string; error?: string }> {
+): Promise<{ success: boolean; credentialId?: string; isSimulated?: boolean; error?: string }> {
   const credentials = getStoredPasskeys();
   if (credentials.length === 0) {
     return { success: false, error: 'No passkey registered on this device.' };
@@ -216,14 +216,16 @@ export async function verifyPasskey(
       if (assertion) {
         return { success: true, credentialId: assertion.id };
       }
-    } catch (e) {
-      console.warn('Native biometric challenge canceled, verifying via registered vault credential:', e);
+      return { success: false, error: 'Biometric assertion was rejected.' };
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Biometric verification canceled or failed.';
+      return { success: false, error: msg };
     }
   }
 
-  // Verification succeeds if stored credential matches
-  if (targetCred) {
-    return { success: true, credentialId: targetCred.id };
+  // Allow verification of explicitly simulated credentials (for development/demo environments)
+  if (targetCred && targetCred.isSimulated) {
+    return { success: true, credentialId: targetCred.id, isSimulated: true };
   }
 
   return { success: false, error: 'Passkey verification failed.' };

@@ -160,6 +160,11 @@ export default function LiveCameraScanner({
 
       osc.start();
       osc.stop(audioCtx.currentTime + 0.09);
+
+      // Explicitly release hardware audio context after audio playback finishes
+      setTimeout(() => {
+        audioCtx.close().catch(() => {});
+      }, 150);
     } catch {
       // AudioContext unavailable or restricted
     }

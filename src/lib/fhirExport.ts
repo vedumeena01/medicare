@@ -353,8 +353,12 @@ export function generateClinicalCsv(options: FhirExportOptions): string {
   return rows.join('\n');
 }
 
-function escapeCsv(str: any): string {
-  const val = str === null || str === undefined ? '' : String(str);
+function escapeCsv(str: unknown): string {
+  let val = str === null || str === undefined ? '' : String(str);
+  // Neutralize CSV Formula Injection (CWE-1236)
+  if (/^[=+@\-\t\r]/.test(val)) {
+    val = `'${val}`;
+  }
   if (val.includes(',') || val.includes('"') || val.includes('\n')) {
     return `"${val.replace(/"/g, '""')}"`;
   }
