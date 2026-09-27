@@ -47,3 +47,8 @@ resume.*
 *.pdf
 !public/samples/**
 RESUME.md
+
+# SQLite database
+*.db
+*.db-journal
+
