@@ -82,12 +82,29 @@ async function runTestSuite() {
     'src/lib/imageOptimization.ts',
     'src/lib/webauthn.ts',
     'src/lib/smartFhirAuth.ts',
+    'Dockerfile',
+    'docker-compose.yml',
+    '.dockerignore',
+    'vercel.json',
+    'DEPLOYMENT_GUIDE.md',
+    'src/app/api/health/route.ts',
   ];
 
   for (const file of requiredFiles) {
     const fullPath = path.join(rootDir, file);
     assert(fs.existsSync(fullPath), `Asset present: ${file}`);
   }
+
+  // Verify Production Cloud Deployment Contracts
+  const deploymentNextConfig = fs.readFileSync(path.join(rootDir, 'next.config.ts'), 'utf-8');
+  assert(deploymentNextConfig.includes("output: 'standalone'"), 'next.config.ts configures standalone output');
+
+  const dockerfileContent = fs.readFileSync(path.join(rootDir, 'Dockerfile'), 'utf-8');
+  assert(dockerfileContent.includes('FROM node:22-alpine AS runner'), 'Dockerfile defines production runner stage');
+  assert(dockerfileContent.includes('USER nextjs'), 'Dockerfile implements non-root execution');
+
+  const vercelJsonContent = fs.readFileSync(path.join(rootDir, 'vercel.json'), 'utf-8');
+  assert(vercelJsonContent.includes('"framework": "nextjs"'), 'vercel.json configures Next.js framework');
 
   // Verify Service Worker Offline Cache Contracts
   const swContent = fs.readFileSync(path.join(rootDir, 'public', 'sw.js'), 'utf-8');

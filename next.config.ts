@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Production Edge Performance & Optimization Settings
+  output: 'standalone',
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
