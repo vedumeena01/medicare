@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "node scripts/test-flows.mjs",
     "ci": "tsc --noEmit && node scripts/test-flows.mjs && next build",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "tunnel": "node scripts/tunnel.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

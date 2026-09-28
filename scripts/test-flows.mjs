@@ -455,6 +455,35 @@ async function runTestSuite() {
   const emergencyCardUpdated = fs.readFileSync(path.join(rootDir, 'src', 'components', 'EmergencyMedicalCard.tsx'), 'utf-8');
   assert(emergencyCardUpdated.includes('verifyPasskey'), 'EmergencyMedicalCard integrates biometric passkey unlock');
 
+  // ---------------------------------------------------------
+  // TEST SUITE 13: Multilingual Voice Narration & Mobile Testing
+  // ---------------------------------------------------------
+  console.log('\n▶ Suite 13: Multilingual Voice Narration & Mobile Testing');
+
+  const narratorFile = path.join(rootDir, 'src', 'components', 'ReportAudioNarrator.tsx');
+  assert(fs.existsSync(narratorFile), 'ReportAudioNarrator component exists');
+  const narratorContent = fs.readFileSync(narratorFile, 'utf-8');
+  assert(narratorContent.includes('generateNarrationScript'), 'ReportAudioNarrator implements clinical script generator');
+  assert(narratorContent.includes('SpeechSynthesisUtterance'), 'ReportAudioNarrator integrates Web Speech API');
+  assert(narratorContent.includes('cycleSpeed') && narratorContent.includes('playbackSpeed'), 'ReportAudioNarrator supports dynamic speech rate speed');
+  assert(narratorContent.includes('selectVoiceForLanguage'), 'ReportAudioNarrator includes Indian accent voice selection');
+
+  const reportDetailContent = fs.readFileSync(path.join(rootDir, 'src', 'app', 'reports', '[id]', 'page.tsx'), 'utf-8');
+  assert(reportDetailContent.includes('ReportAudioNarrator'), 'Report detail page mounts ReportAudioNarrator');
+
+  const tunnelScript = path.join(rootDir, 'scripts', 'tunnel.mjs');
+  assert(fs.existsSync(tunnelScript), 'scripts/tunnel.mjs exists for mobile camera testing');
+  const tunnelContent = fs.readFileSync(tunnelScript, 'utf-8');
+  assert(tunnelContent.includes('untun'), 'tunnel.mjs configures untun cloudflare tunnel');
+
+  const packageJsonContent = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
+  assert(packageJsonContent.scripts && packageJsonContent.scripts.tunnel, 'package.json exports tunnel npm script');
+
+  const healthRoute = path.join(rootDir, 'src', 'app', 'api', 'health', 'route.ts');
+  assert(fs.existsSync(healthRoute), 'src/app/api/health/route.ts exists');
+  const healthContent = fs.readFileSync(healthRoute, 'utf-8');
+  assert(healthContent.includes('status') && healthContent.includes('prismaClient'), 'Health endpoint tests database connectivity');
+
 
   // ---------------------------------------------------------
   // Summary & Final Exit

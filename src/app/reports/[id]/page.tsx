@@ -29,6 +29,7 @@ import Sidebar from '@/components/Sidebar';
 import DisclaimerBanner from '@/components/DisclaimerBanner';
 import HealthRiskCard from '@/components/HealthRiskCard';
 import HealthTrendChart from '@/components/HealthTrendChart';
+import ReportAudioNarrator from '@/components/ReportAudioNarrator';
 import { useApp } from '@/context/AppContext';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -147,6 +148,9 @@ export default function ReportDetailPage({
 
           {/* Prominent Mandatory Safety Warning Banner (Section 17 & 56) */}
           <DisclaimerBanner />
+
+          {/* Multilingual Voice Readout Audio Narrator */}
+          <ReportAudioNarrator report={report} defaultLanguage={language} />
 
           {/* Section 18: Overall Summary Card */}
           <div className="bg-white rounded-3xl border border-blue-200/70 p-6 sm:p-7 shadow-xs space-y-3 bg-gradient-to-br from-blue-50/40 via-white to-white">
