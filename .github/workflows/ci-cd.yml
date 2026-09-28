@@ -88,6 +88,12 @@ jobs:
       - name: "Generate Prisma Client"
         run: npx prisma generate
 
+      - name: "Initialize SQLite Database"
+        run: npx prisma db push --accept-data-loss
+
+      - name: "Seed Test Database"
+        run: npm run db:seed
+
       - name: "Validate Prisma Schema"
         run: npx prisma validate
 
@@ -136,6 +142,9 @@ jobs:
 
       - name: "Generate Prisma Client"
         run: npx prisma generate
+
+      - name: "Initialize SQLite Database"
+        run: npx prisma db push --accept-data-loss
 
       - name: "Execute Production Bundle"
         run: npm run build
