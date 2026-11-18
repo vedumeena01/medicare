@@ -39,6 +39,7 @@ export default function RegisterPage() {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showGoogleModal, setShowGoogleModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +50,7 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.mobile || !formData.password) {
       setError('Please fill in all required fields.');
@@ -65,20 +66,39 @@ export default function RegisterPage() {
     }
 
     setError('');
-    setSuccess(true);
+    setLoading(true);
 
-    login(formData.email);
-    updateUser({
-      name: formData.name,
-      email: formData.email,
-      mobile: formData.mobile,
-      age: 28,
-      gender: 'Male'
-    });
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          mobile: formData.mobile,
+          password: formData.password,
+          age: 28,
+          gender: 'Male',
+          language,
+        }),
+      });
 
-    setTimeout(() => {
-      router.push('/verify-otp');
-    }, 800);
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Registration failed. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      setSuccess(true);
+      login(formData.email);
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 600);
+    } catch {
+      setError('Failed to connect to registration server.');
+      setLoading(false);
+    }
   };
 
   const handleGoogleSignIn = () => {

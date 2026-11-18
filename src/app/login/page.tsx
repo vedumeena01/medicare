@@ -20,11 +20,34 @@ export default function LoginPage() {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
   const [showGoogleModal, setShowGoogleModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    login(emailOrPhone || 'user@medicare.ai');
-    router.push('/dashboard');
+    setErrorMsg('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailOrMobile: emailOrPhone, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Authentication failed. Please verify your credentials.');
+        setLoading(false);
+        return;
+      }
+
+      login(emailOrPhone || 'user@medicare.ai');
+      router.push('/dashboard');
+    } catch {
+      setErrorMsg('Failed to connect to authentication server. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -83,6 +106,12 @@ export default function LoginPage() {
               Or with credentials
             </span>
           </div>
+
+          {errorMsg && (
+            <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl">
+              <span className="font-bold">Login Error:</span> {errorMsg}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -143,9 +172,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all"
+              disabled={loading}
+              className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
             >
-              {t('navLogin')}
+              {loading ? 'Authenticating...' : t('navLogin')}
             </button>
 
             <Link

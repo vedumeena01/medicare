@@ -215,16 +215,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }
       });
 
-      // Fetch user profile from persistent backend only if not explicitly logged out
+      // Verify authenticated session with backend
       if (storedAuth !== 'false') {
-        fetch('/api/user')
-          .then((res) => res.json())
+        fetch('/api/auth/me')
+          .then((res) => (res.ok ? res.json() : null))
           .then((data) => {
-            if (data.success && data.user) {
+            if (data?.authenticated && data?.user) {
               setUser(data.user);
               setIsAuthenticated(true);
               localStorage.setItem('medicare_auth', 'true');
               localStorage.setItem('medicare_user', JSON.stringify(data.user));
+            } else {
+              // Fallback to local profile if offline or in guest session
+              fetch('/api/user')
+                .then((res) => res.json())
+                .then((userData) => {
+                  if (userData.success && userData.user) {
+                    setUser(userData.user);
+                    setIsAuthenticated(true);
+                  }
+                })
+                .catch(() => {});
             }
           })
           .catch(() => {});
@@ -354,6 +365,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(false);
     localStorage.setItem('medicare_auth', 'false');
     localStorage.removeItem('medicare_user');
+    // Clear server-side HTTP-only session cookie
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
   };
 
   const updateUser = (updated: Partial<UserProfile>) => {
