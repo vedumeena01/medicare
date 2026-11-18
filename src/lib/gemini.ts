@@ -32,12 +32,9 @@ export function getGeminiApiKey(): string {
 }
 
 export const GEMINI_CANDIDATE_MODELS = [
-  'gemini-3.8-flash',
-  'gemini-3.1-pro-preview',
-  'gemini-3.6-flash',
-  'gemini-flash-latest',
-  'gemini-2.5-pro',
+  'gemini-2.0-flash',
   'gemini-1.5-flash',
+  'gemini-1.5-pro',
 ];
 
 export async function generateWithFallbackModel(
@@ -279,28 +276,21 @@ interface GeminiReportJson {
       return { report: liveReport, isLiveAI: true, message: `Processed via Google ${modelName}` };
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error);
-      console.warn('Gemini Live API call failed, using heuristic clinical fallback:', msg);
+      console.error('Gemini Live API call failed:', msg);
+      throw new Error(`AI Medical Document Analysis failed: ${msg}. Clinical safety protocol prohibits generating synthetic lab findings for real patient documents.`);
     }
   }
 
-  // 2. High-Fidelity Heuristic Fallback Engine
-  // Ensures 100% stable execution when no API key is provided or offline
-  const baseSample = sampleReports[0];
-  const customReport: MedicalReport = {
-    ...baseSample,
-    id: 'rep-' + Date.now(),
-    fileName,
-    reportType: (reportType as ReportType) || 'Blood Test',
-    uploadedAt: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-    language,
-    confidenceThresholdMet: true,
-  };
+  // Clinical Safety Gate: Never fabricate lab findings if live AI is unavailable
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error('Gemini API key is not configured. Real medical document analysis requires a valid GEMINI_API_KEY. Synthetic data fallback is disabled for patient safety.');
+  }
 
-  return {
-    report: customReport,
-    isLiveAI: false,
-    message: apiKey ? 'Live AI fallback triggered' : 'Processed with built-in neural simulation (Add GEMINI_API_KEY for live vision)',
-  };
+  if (!base64Data) {
+    throw new Error('No document image or PDF data provided for analysis.');
+  }
+
+  throw new Error('Unable to process medical document with AI service.');
 }
 
 export async function scanMedicineWithAI(params: {
@@ -375,41 +365,21 @@ Extract the pharmaceutical data and return a JSON object with this exact structu
       };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.warn('Gemini Medicine Scan failed, using heuristic clinical fallback:', msg);
+      console.error('Gemini Medicine Scan failed:', msg);
+      throw new Error(`Visual medicine scan failed: ${msg}. Visual OCR could not safely identify the packaging. Please enter medication details manually.`);
     }
   }
 
-  // Fallback clinical recognition matching sample
-  const sample = sampleMedicines[0];
-  return {
-    medicine: {
-      name: sample.name,
-      strength: sample.strength,
-      form: sample.form,
-      manufacturer: sample.manufacturer,
-      dosageInstruction: sample.dosageInstruction,
-      dosageInstructionHi: sample.dosageInstructionHi,
-      frequency: sample.frequency,
-      timeSlot: sample.timeSlot,
-      scheduledTime: sample.scheduledTime,
-      startDate: new Date().toISOString().split('T')[0],
-      status: 'Upcoming',
-      description: sample.description,
-      descriptionHi: sample.descriptionHi,
-      commonUses: sample.commonUses,
-      commonUsesHi: sample.commonUsesHi,
-      precautions: sample.precautions,
-      precautionsHi: sample.precautionsHi,
-      sideEffects: sample.sideEffects,
-      sideEffectsHi: sample.sideEffectsHi,
-      whenToSeekHelp: sample.whenToSeekHelp,
-      whenToSeekHelpHi: sample.whenToSeekHelpHi,
-      confidenceScore: 0.97,
-      extractedFromPhoto: true,
-    },
-    isLiveAI: false,
-    message: apiKey ? 'Live AI fallback triggered' : 'Identified with neural simulation',
-  };
+  // Clinical Safety Gate: Never fabricate medicine details or hallucinate dosages
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error('Gemini API key is not configured. Visual medicine recognition requires a valid GEMINI_API_KEY. Please enter details manually or configure an API key.');
+  }
+
+  if (!base64Data) {
+    throw new Error('No image provided for medicine scanning.');
+  }
+
+  throw new Error('Unable to scan medicine.');
 }
 
 export async function chatWithAIHealthAssistant(params: {
@@ -881,23 +851,23 @@ function runHeuristicDrugCheck(
     });
   }
 
-  // If no interactions detected at all
+  // If no interactions detected in basic offline rules
   if (interactions.length === 0) {
     interactions.push({
       drug1: drugs[0] || 'Primary Medicine',
       drug2: drugs[1] || 'Secondary Medicine',
-      severity: 'safe',
-      title: 'No Direct Hazardous Interactions Detected',
-      titleHi: 'कोई सीधा हानिकारक टकराव नहीं पाया गया',
-      mechanism: 'These medications utilize distinct metabolic pathways and show no documented competitive inhibition or antagonistic effects.',
-      mechanismHi: 'ये दवाएं शरीर में अलग-अलग तरीकों से काम करती हैं और इनके बीच कोई खतरनाक टकराव नहीं दर्ज है।',
-      recommendation: 'Continue prescribed dosages as directed by your physician. Maintain standard interval spacing between doses.',
-      recommendationHi: 'डॉक्टर द्वारा बताए गए समय पर दवा लेते रहें और दोनों के बीच उचित समय का अंतर रखें।',
+      severity: 'caution',
+      title: 'Limited Offline Screening: Verification Required',
+      titleHi: 'सीमित ऑफलाइन जांच: डॉक्टर से सत्यापन आवश्यक',
+      mechanism: 'Only basic emergency contraindications (penicillin cross-reactivity, paracetamol duplication, NSAID + blood thinners) are screened offline. Comprehensive pharmacokinetic screening requires live AI or clinical consultation.',
+      mechanismHi: 'ऑफलाइन मोड में केवल बुनियादी आपातकालीन नियमों की जांच की गई है। दवाओं के सम्पूर्ण विश्लेषण के लिए डॉक्टर या फार्मासिस्ट से परामर्श अवश्य लें।',
+      recommendation: 'Do not assume complete pharmacological safety. Verify with your prescribing doctor or pharmacist before combining these medications.',
+      recommendationHi: 'इसे पूर्णतः सुरक्षित न मानें। इन दवाओं को एक साथ लेने से पहले अपने डॉक्टर या फार्मासिस्ट से पुष्टि अवश्य करें।',
     });
   }
 
-  let overallRisk: 'Safe' | 'Moderate Risk' | 'High Risk' = 'Safe';
-  let overallRiskHi = 'सुरक्षित';
+  let overallRisk: 'Safe' | 'Moderate Risk' | 'High Risk' = 'Moderate Risk';
+  let overallRiskHi = 'क्लिनिकल सत्यापन आवश्यक';
 
   if (hasSevere) {
     overallRisk = 'High Risk';
@@ -908,22 +878,22 @@ function runHeuristicDrugCheck(
     overallRiskHi = 'मध्यम जोखिम (सावधानी आवश्यक)';
     score = Math.max(65, score);
   } else {
-    overallRisk = 'Safe';
-    overallRiskHi = 'सामान्यतः सुरक्षित';
-    score = Math.min(98, Math.max(88, score));
+    overallRisk = 'Moderate Risk';
+    overallRiskHi = 'क्लिनिकल सत्यापन आवश्यक';
+    score = 75;
   }
 
   const summary = hasSevere
     ? `CRITICAL ATTENTION: A potentially hazardous drug interaction or allergy conflict was identified across your selected medications (${drugs.join(', ')}). Immediate physician consultation is strongly advised before taking these concurrently.`
     : hasModerate
-    ? `MODERATE CAUTION: Your selected medications (${drugs.join(', ')}) can generally be taken together, but require specific spacing and meal-timing rules to ensure optimal absorption and avoid stomach irritation.`
-    : `SAFE PROFILE: No adverse pharmacological conflicts detected among your active medications (${drugs.join(', ')}). Follow routine meal timings and hydration.`;
+    ? `MODERATE CAUTION: Your selected medications (${drugs.join(', ')}) require specific spacing and meal-timing rules to avoid adverse effects. Consult your pharmacist.`
+    : `LIMITED OFFLINE SCREENING: Evaluated basic emergency contraindications for (${drugs.join(', ')}). Comprehensive pharmacological interaction screening requires an active Gemini API connection or professional physician review.`;
 
   const summaryHi = hasSevere
     ? `गंभीर चेतावनी: आपकी चयनित दवाओं (${drugs.join(', ')}) के बीच हानिकारक टकराव या एलर्जी का जोखिम पाया गया है। इन्हें एक साथ लेने से पहले तुरंत अपने डॉक्टर से संपर्क करें।`
     : hasModerate
-    ? `मध्यम सावधानी: आपकी चयनित दवाएं (${drugs.join(', ')}) साथ ली जा सकती हैं, परंतु उचित अवशोषण और पेट की सुरक्षा के लिए इनके समय और भोजन में अंतर रखना आवश्यक है।`
-    : `सुरक्षित स्थिति: आपकी दवाओं (${drugs.join(', ')}) के बीच कोई हानिकारक टकराव नहीं मिला है। निर्धारित समय पर भोजन के साथ इनका सेवन जारी रखें।`;
+    ? `मध्यम सावधानी: आपकी चयनित दवाएं (${drugs.join(', ')}) साथ लेने के लिए समय और भोजन के नियमों का पालन करें।`
+    : `सीमित ऑफलाइन जांच: बुनियादी आपातकालीन नियमों की जांच हुई है। सम्पूर्ण सुरक्षित उपयोग की पुष्टि के लिए अपने डॉक्टर या फार्मासिस्ट से संपर्क करें।`;
 
   return {
     overallRisk,

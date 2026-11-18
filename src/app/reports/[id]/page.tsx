@@ -494,7 +494,7 @@ export default function ReportDetailPage({
               <input
                 type="text"
                 readOnly
-                value={`https://medicare.ai/reports/${report.id}?token=sec_98439`}
+                value={typeof window !== 'undefined' ? `${window.location.origin}/reports/${report.id}` : `/reports/${report.id}`}
                 className="w-full p-2 bg-slate-100 rounded-xl text-xs font-mono border border-slate-200 select-all"
               />
             </div>

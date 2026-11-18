@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import {
   MedicalReport,
   Medicine,
@@ -71,7 +72,7 @@ function ensureDatabaseInitialized(): DatabaseSchema {
     const parsed = JSON.parse(raw) as DatabaseSchema;
 
     let changed = false;
-    if (!parsed.user || !parsed.user.name || parsed.user.name === 'New User') {
+    if (!parsed.user || typeof parsed.user !== 'object' || !parsed.user.id) {
       parsed.user = sampleUser;
       changed = true;
     }
@@ -323,6 +324,187 @@ function backgroundDeleteFamilyMember(id: string): void {
   prisma.familyMember.delete({ where: { id } }).catch(() => {});
 }
 
+function backgroundSyncDoctor(d: Doctor): void {
+  prisma.doctor
+    .upsert({
+      where: { id: d.id },
+      update: {
+        name: d.name,
+        nameHi: d.nameHi || null,
+        specialty: d.specialty,
+        specialtyHi: d.specialtyHi || null,
+        qualification: d.qualification,
+        experienceYears: d.experienceYears || 10,
+        hospital: d.hospital,
+        rating: d.rating || 4.8,
+        reviewsCount: d.reviewsCount || 120,
+        consultationFee: d.consultationFee || 800,
+        avatarUrl: d.avatarUrl || null,
+        availableDays: JSON.stringify(d.availableDays || []),
+        slotsJson: JSON.stringify(d.slots || {}),
+      },
+      create: {
+        id: d.id,
+        name: d.name,
+        nameHi: d.nameHi || null,
+        specialty: d.specialty,
+        specialtyHi: d.specialtyHi || null,
+        qualification: d.qualification,
+        experienceYears: d.experienceYears || 10,
+        hospital: d.hospital,
+        rating: d.rating || 4.8,
+        reviewsCount: d.reviewsCount || 120,
+        consultationFee: d.consultationFee || 800,
+        avatarUrl: d.avatarUrl || null,
+        availableDays: JSON.stringify(d.availableDays || []),
+        slotsJson: JSON.stringify(d.slots || {}),
+      },
+    })
+    .catch((err) => console.warn('[Prisma Sync Doctor Error]:', err.message));
+}
+
+function backgroundSyncAppointment(apt: Appointment): void {
+  prisma.appointment
+    .upsert({
+      where: { id: apt.id },
+      update: {
+        userId: apt.userId || 'usr-1',
+        doctorId: apt.doctorId,
+        doctorName: apt.doctorName,
+        doctorSpecialty: apt.doctorSpecialty,
+        doctorHospital: apt.doctorHospital,
+        date: apt.date,
+        timeSlot: apt.timeSlot,
+        type: apt.type || 'In-Person',
+        status: apt.status || 'Upcoming',
+        reasonForVisit: apt.reasonForVisit || '',
+        symptomsJson: JSON.stringify(apt.symptoms || []),
+        attachedReportIds: JSON.stringify(apt.attachedReportIds || []),
+        notes: apt.notes || null,
+      },
+      create: {
+        id: apt.id,
+        userId: apt.userId || 'usr-1',
+        doctorId: apt.doctorId,
+        doctorName: apt.doctorName,
+        doctorSpecialty: apt.doctorSpecialty,
+        doctorHospital: apt.doctorHospital,
+        date: apt.date,
+        timeSlot: apt.timeSlot,
+        type: apt.type || 'In-Person',
+        status: apt.status || 'Upcoming',
+        reasonForVisit: apt.reasonForVisit || '',
+        symptomsJson: JSON.stringify(apt.symptoms || []),
+        attachedReportIds: JSON.stringify(apt.attachedReportIds || []),
+        notes: apt.notes || null,
+      },
+    })
+    .catch((err) => console.warn('[Prisma Sync Appointment Error]:', err.message));
+}
+
+function backgroundSyncConsultation(c: Consultation): void {
+  prisma.consultation
+    .upsert({
+      where: { id: c.id },
+      update: {
+        appointmentId: c.appointmentId || null,
+        userId: c.userId || 'usr-1',
+        doctorName: c.doctorName,
+        specialty: c.specialty,
+        date: c.date,
+        symptomsJson: JSON.stringify(c.symptoms || []),
+        doctorNotes: c.doctorNotes || '',
+        doctorNotesHi: c.doctorNotesHi || null,
+        diagnosisSuggestion: c.diagnosisSuggestion || null,
+        prescribedMedsJson: JSON.stringify(c.prescribedMedicines || []),
+        attachedReportsJson: JSON.stringify(c.attachedReportNames || []),
+      },
+      create: {
+        id: c.id,
+        appointmentId: c.appointmentId || null,
+        userId: c.userId || 'usr-1',
+        doctorName: c.doctorName,
+        specialty: c.specialty,
+        date: c.date,
+        symptomsJson: JSON.stringify(c.symptoms || []),
+        doctorNotes: c.doctorNotes || '',
+        doctorNotesHi: c.doctorNotesHi || null,
+        diagnosisSuggestion: c.diagnosisSuggestion || null,
+        prescribedMedsJson: JSON.stringify(c.prescribedMedicines || []),
+        attachedReportsJson: JSON.stringify(c.attachedReportNames || []),
+      },
+    })
+    .catch((err) => console.warn('[Prisma Sync Consultation Error]:', err.message));
+}
+
+function backgroundSyncNotification(n: NotificationItem): void {
+  prisma.notificationItem
+    .upsert({
+      where: { id: n.id },
+      update: {
+        userId: n.userId || 'usr-1',
+        type: n.type || 'system',
+        title: n.title,
+        titleHi: n.titleHi || null,
+        message: n.message,
+        messageHi: n.messageHi || null,
+        timestamp: n.timestamp,
+        read: n.read || false,
+        actionUrl: n.actionUrl || null,
+        channel: n.channel || null,
+        recipientPhone: n.recipientPhone || null,
+        recipientName: n.recipientName || null,
+        deliveryStatus: n.deliveryStatus || 'pending',
+      },
+      create: {
+        id: n.id,
+        userId: n.userId || 'usr-1',
+        type: n.type || 'system',
+        title: n.title,
+        titleHi: n.titleHi || null,
+        message: n.message,
+        messageHi: n.messageHi || null,
+        timestamp: n.timestamp,
+        read: n.read || false,
+        actionUrl: n.actionUrl || null,
+        channel: n.channel || null,
+        recipientPhone: n.recipientPhone || null,
+        recipientName: n.recipientName || null,
+        deliveryStatus: n.deliveryStatus || 'pending',
+      },
+    })
+    .catch((err) => console.warn('[Prisma Sync Notification Error]:', err.message));
+}
+
+function backgroundSyncFeedback(fb: FeedbackItem): void {
+  prisma.feedbackItem
+    .upsert({
+      where: { id: fb.id },
+      update: {
+        userId: fb.userId || 'usr-1',
+        userName: fb.userName || null,
+        rating: fb.rating || 5,
+        category: fb.category || 'general',
+        description: fb.description,
+        timestamp: fb.timestamp,
+        status: fb.status || 'new',
+        deviceDetails: fb.deviceDetails ? JSON.stringify(fb.deviceDetails) : null,
+      },
+      create: {
+        id: fb.id,
+        userId: fb.userId || 'usr-1',
+        userName: fb.userName || null,
+        rating: fb.rating || 5,
+        category: fb.category || 'general',
+        description: fb.description,
+        timestamp: fb.timestamp,
+        status: fb.status || 'new',
+        deviceDetails: fb.deviceDetails ? JSON.stringify(fb.deviceDetails) : null,
+      },
+    })
+    .catch((err) => console.warn('[Prisma Sync Feedback Error]:', err.message));
+}
+
 // ---------------------------------------------------------
 // Unified Database Access Layer (Sync & Async Prisma)
 // ---------------------------------------------------------
@@ -520,7 +702,7 @@ export const db = {
     const data = ensureDatabaseInitialized();
     const newMed: Medicine = {
       ...medicine,
-      id: medicine.id || 'med-' + Date.now(),
+      id: medicine.id || 'med-' + crypto.randomUUID(),
       userId: medicine.userId || data.user.id || 'usr-1',
     };
     const existingIndex = data.medicines.findIndex((m) => m.id === newMed.id);
@@ -595,7 +777,7 @@ export const db = {
     if (!data.familyMembers) data.familyMembers = [];
     const newMember: FamilyMember = {
       ...member,
-      id: 'fam-' + Date.now(),
+      id: 'fam-' + crypto.randomUUID(),
     };
     data.familyMembers.push(newMember);
     writeDatabase(data);
@@ -643,7 +825,7 @@ export const db = {
     const data = ensureDatabaseInitialized();
     const newApt: Appointment = {
       ...appointment,
-      id: appointment.id || 'apt-' + Date.now(),
+      id: appointment.id || 'apt-' + crypto.randomUUID(),
       createdAt: appointment.createdAt || new Date().toISOString().split('T')[0],
       status: appointment.status || 'Upcoming',
     };
@@ -653,7 +835,7 @@ export const db = {
     // Auto-create notification for confirmed appointment
     if (!data.notifications) data.notifications = [];
     data.notifications.unshift({
-      id: 'notif-' + Date.now(),
+      id: 'notif-' + crypto.randomUUID(),
       userId: newApt.userId,
       type: 'appointment',
       title: `Appointment Confirmed: ${newApt.doctorName}`,
@@ -701,7 +883,7 @@ export const db = {
     const data = ensureDatabaseInitialized();
     const newCon: Consultation = {
       ...consultation,
-      id: consultation.id || 'con-' + Date.now(),
+      id: consultation.id || 'con-' + crypto.randomUUID(),
     };
     if (!data.consultations) data.consultations = [];
     const idx = data.consultations.findIndex((c) => c.id === newCon.id);
@@ -742,7 +924,7 @@ export const db = {
     if (!data.notifications) data.notifications = [];
     const item: NotificationItem = {
       ...notification,
-      id: 'notif-' + Date.now(),
+      id: 'notif-' + crypto.randomUUID(),
       timestamp: 'Just now',
     };
     data.notifications.unshift(item);
@@ -766,7 +948,7 @@ export const db = {
     if (!data.feedback) data.feedback = [];
     const newFeedback: FeedbackItem = {
       ...feedback,
-      id: feedback.id || 'fb-' + Date.now(),
+      id: feedback.id || 'fb-' + crypto.randomUUID(),
       timestamp: feedback.timestamp || new Date().toISOString(),
       status: feedback.status || 'new',
     };
@@ -775,7 +957,7 @@ export const db = {
     return newFeedback;
   },
 
-  // Full Database Sync to SQLite
+  // Full Database Sync to SQLite (All 9 Core Clinical & Operational Entities)
   async syncToSqlite(data?: DatabaseSchema): Promise<void> {
     const current = data || ensureDatabaseInitialized();
     backgroundSyncUser(current.user);
@@ -787,6 +969,21 @@ export const db = {
     }
     for (const f of current.familyMembers || []) {
       backgroundSyncFamilyMember(f, current.user?.id || 'usr-1');
+    }
+    for (const d of current.doctors || []) {
+      backgroundSyncDoctor(d);
+    }
+    for (const a of current.appointments || []) {
+      backgroundSyncAppointment(a);
+    }
+    for (const c of current.consultations || []) {
+      backgroundSyncConsultation(c);
+    }
+    for (const n of current.notifications || []) {
+      backgroundSyncNotification(n);
+    }
+    for (const fb of current.feedback || []) {
+      backgroundSyncFeedback(fb);
     }
   },
 

@@ -115,12 +115,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Stale-While-Revalidate (SWR) for Read-Only Clinical Reference APIs
-  const isReadApi =
-    url.pathname === '/api/reports' ||
-    url.pathname === '/api/medicines' ||
-    url.pathname === '/api/doctors' ||
-    url.pathname === '/api/config/gemini';
+  // 3. Stale-While-Revalidate (SWR) for Public Static Reference APIs ONLY
+  // PHI endpoints (/api/reports, /api/medicines, /api/user) and sensitive config (/api/config/gemini)
+  // are strictly excluded from HTTP caches to prevent Protected Health Information leakage across shared sessions.
+  const isReadApi = url.pathname === '/api/doctors';
 
   if (isReadApi) {
     event.respondWith(

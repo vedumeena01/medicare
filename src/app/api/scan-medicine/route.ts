@@ -6,6 +6,20 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { base64Data, mimeType, language } = body;
 
+    if (!base64Data || typeof base64Data !== 'string') {
+      return NextResponse.json(
+        { error: 'Missing medicine packaging image payload (base64Data).' },
+        { status: 400 }
+      );
+    }
+
+    if (base64Data.length > 20 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'Image payload exceeds the maximum allowed size of 15MB.' },
+        { status: 413 }
+      );
+    }
+
     const result = await scanMedicineWithAI({
       base64Data,
       mimeType: mimeType || 'image/jpeg',

@@ -7,20 +7,23 @@ generator client {
 }
 
 model User {
-  id           String         @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
-  email        String         @unique
+  email        String   @unique
   mobile       String
   passwordHash String?
-  age          Int            @default(28)
-  gender       String         @default("Male")
-  language     String         @default("en")
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  age          Int      @default(28)
+  gender       String   @default("Male")
+  language     String   @default("en")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   reports       Report[]
   medicines     Medicine[]
   familyMembers FamilyMember[]
+  appointments  Appointment[]
+  consultations Consultation[]
+  notifications NotificationItem[]
 }
 
 model Report {
@@ -48,30 +51,30 @@ model Report {
 }
 
 model Medicine {
-  id                String   @id @default(uuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name              String
-  strength          String
-  form              String   @default("Tablet")
-  manufacturer      String?
-  dosageInstruction String
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                String
+  strength            String
+  form                String   @default("Tablet")
+  manufacturer        String?
+  dosageInstruction   String
   dosageInstructionHi String?
-  frequency         String   @default("Once daily")
-  timeSlot          String   @default("Morning")
-  scheduledTime     String   @default("08:00 AM")
-  startDate         String
-  endDate           String?
-  status            String   @default("Upcoming")
-  takenAt           String?
-  description       String
-  descriptionHi     String?
-  commonUsesJson    String   // Serialized string[]
-  precautionsJson   String   // Serialized string[]
-  sideEffectsJson   String   // Serialized string[]
-  whenToSeekHelp    String
-  whenToSeekHelpHi  String?
-  createdAt         DateTime @default(now())
+  frequency           String   @default("Once daily")
+  timeSlot            String   @default("Morning")
+  scheduledTime       String   @default("08:00 AM")
+  startDate           String
+  endDate             String?
+  status              String   @default("Upcoming")
+  takenAt             String?
+  description         String
+  descriptionHi       String?
+  commonUsesJson      String   // Serialized string[]
+  precautionsJson     String   // Serialized string[]
+  sideEffectsJson     String   // Serialized string[]
+  whenToSeekHelp      String
+  whenToSeekHelpHi    String?
+  createdAt           DateTime @default(now())
 }
 
 model FamilyMember {
@@ -85,4 +88,90 @@ model FamilyMember {
   gender               String
   healthConditionsJson String   @default("[]")
   createdAt            DateTime @default(now())
+}
+
+model Doctor {
+  id              String   @id @default(uuid())
+  name            String
+  nameHi          String?
+  specialty       String
+  specialtyHi     String?
+  qualification   String
+  experienceYears Int      @default(10)
+  hospital        String
+  rating          Float    @default(4.8)
+  reviewsCount    Int      @default(120)
+  consultationFee Int      @default(800)
+  avatarUrl       String?
+  availableDays   String   @default("[]") // JSON string[]
+  slotsJson       String   @default("{}") // JSON { morning: string[], afternoon: string[], evening: string[] }
+  createdAt       DateTime @default(now())
+}
+
+model Appointment {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  doctorId          String
+  doctorName        String
+  doctorSpecialty   String
+  doctorHospital    String
+  date              String
+  timeSlot          String
+  type              String   @default("In-Person")
+  status            String   @default("Upcoming")
+  reasonForVisit    String
+  symptomsJson      String   @default("[]")
+  attachedReportIds String   @default("[]")
+  notes             String?
+  createdAt         DateTime @default(now())
+}
+
+model Consultation {
+  id                  String   @id @default(uuid())
+  appointmentId       String?
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  doctorName          String
+  specialty           String
+  date                String
+  symptomsJson        String   @default("[]")
+  doctorNotes         String
+  doctorNotesHi       String?
+  diagnosisSuggestion String?
+  prescribedMedsJson  String   @default("[]")
+  attachedReportsJson String   @default("[]")
+  createdAt           DateTime @default(now())
+}
+
+model NotificationItem {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           String   @default("system")
+  title          String
+  titleHi        String?
+  message        String
+  messageHi      String?
+  timestamp      String
+  read           Boolean  @default(false)
+  actionUrl      String?
+  channel        String?
+  recipientPhone String?
+  recipientName  String?
+  deliveryStatus String?  @default("pending")
+  createdAt      DateTime @default(now())
+}
+
+model FeedbackItem {
+  id             String   @id @default(uuid())
+  userId         String
+  userName       String?
+  rating         Int      @default(5)
+  category       String   @default("general")
+  description    String
+  timestamp      String
+  status         String   @default("new")
+  deviceDetails  String?  // JSON
+  createdAt      DateTime @default(now())
 }
